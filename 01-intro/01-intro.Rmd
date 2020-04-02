@@ -888,6 +888,6 @@ class: inverse, center, middle
 # Next lecture: Deep dive into Git(Hub).
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
-```{r gen_pdf, include = FALSE, eval = FALSE}
+```{r gen_pdf, include = FALSE, cache = FALSE, eval = FALSE}
 pagedown::chrome_print("01-intro.html", output = "01-intro.pdf")
 ```
