@@ -86,7 +86,7 @@ name: prologue
 
 ☑ Once that's done, pull to get the latest lecture slides.
 
-☑ Do you have Bash-compatible shell? (Windows users: see [here](#windows) before continuing.)
+☑ Do you have Bash-compatible shell? (**Windows** users: see [here](#windows) before continuing.)
 
 --
 
@@ -143,7 +143,7 @@ Don't be thrown off by terminology: *shell*, *terminal*, *tty*, *command prompt*
 
 There are many shell variants, but we're going to focus on [**Bash**](https://www.gnu.org/software/bash/) (i.e. **B**ourne **a**gain **sh**ell).
 - Default shell on Linux and MacOS.
-- Windows users need to install a Bash-compatible shell (see [here](#windows)).
+- Windows users need to install a Bash-compatible shell first (again, see [here](#windows)).
 
 --
 
@@ -204,16 +204,20 @@ name: basics
 
 # First look
 
-Open up your Bash shell.
+Let's open up our Bash shell. 
 
-You can either do this directly...
-- [Linux](https://www.wikihow.com/Open-a-Terminal-Window-in-Ubuntu) (You already know what you're doing, but still...)
+A convenient way to do this is through [RStudio's built-in Terminal](https://support.rstudio.com/hc/en-us/articles/115010737148-Using-the-RStudio-Terminal).
+- Hitting `Shift`+`Alt`+`T` will cause a "Terminal" tab to open up in the bottom-left window pane (i.e. next to the "Console" tab).
+- This should run Bash by default if it is installed on your system. (Windows users: Once again, see [here](#wsl-rstudio).)
+
+--
+
+</br>
+
+P.S. Of course, it's always possible to open up the Bash shell directly if you prefer.
+- [Linux](https://www.wikihow.com/Open-a-Terminal-Window-in-Ubuntu)
 - [Mac](https://www.techwalla.com/articles/how-to-open-terminal-on-a-macbook)
 - [Windows](https://www.howtogeek.com/265900/everything-you-can-do-with-windows-10s-new-bash-shell/)
-
-... or, go through RStudio's build-in Terminal (likely, the most convenient way for most of you).
-- Hitting `Shift`+`Alt`+`T` will cause a "Terminal" tab to open up in the bottom-left window pane (i.e. next to the "Console" tab).
-- This should run Bash by default if it is installed on your system. Windows users: See [here](#wsl-rstudio).
 
 ---
 
@@ -1655,43 +1659,51 @@ Windows users have two options:
 - **Pros:** A self-contained Linux image (terminal) that allows full Bash functionality. 
 - **Cons:** Must be installed first and only available to Windows 10 users.
 
-I'm going to go out on a limb and recommend option 2 (WSL) if available to you. It's more overhead, but I think worth it. See the next few slides for instructions and tips...
+I'm going to go out on a limb and recommend option 2 (WSL) if available to you. It's more overhead, but I think worth it. See the next two slides for instructions and tips...
 
 .footnote[(Back to [table of contents](#toc).)]
 
 ---
+name:wsl
 
 # WSL
 
-The basic WSL installation guide is [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10). 
-- Follow the guide to install your preferred Linux distro first. Ubuntu is a good choice. 
+The basic WSL installation guide is [**here**](https://docs.microsoft.com/en-us/windows/wsl/install-win10). 
+- Follow the guide to install your preferred Linux distro. [Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6) is a good choice. 
 - Then, once you've restarted your PC, come back to these slides.
 
-After installing the WSL, you need to navigate to today's lecture directory to run the examples.
-- Presumably, you've cloned the course repo somewhere on your (Windows) C drive. 
-- The way this work is that Windows drives are mounted on the WSL's `mnt` directory. (More [here](https://www.howtogeek.com/261383/how-to-access-your-ubuntu-bash-files-in-windows-and-your-windows-system-drive-in-bash/).)
-- Say you cloned the repo to "C:\\Users\\Grant\\ec510\\lectures".
-- The WSL equivalent is "/mnt/c/Users/Grant/ec510/lectures".
-- So, then you can navigate to today's lecture through the WSL with: `$ cd /mnt/c/Users/Grant/ec510/lectures/03-shell`. Adjust as needed.
+After installing your chosen WSL, you need to navigate to today's lecture directory to run the examples. You have two options:
 
-**Tip:** If you use the WSL through RStudio's Terminal, then it will automatically configure the path (incl. mount point, etc.) to be the present working directing. Details on the next slide...
+### i) Go directly through the WSL 
+
+Presumably, you've cloned the course repo somewhere on your C drive. 
+- The way [this works](https://www.howtogeek.com/261383/how-to-access-your-ubuntu-bash-files-in-windows-and-your-windows-system-drive-in-bash/) is that Windows drives are mounted on your WSL's `mnt` directory.
+- Say you cloned the repo to "C:\\Users\\Grant\\ec510\\lectures".
+- Then, the WSL equivalent is "/mnt/c/Users/Grant/ec510/lectures".
+- So, you can navigate to today's lecture directory through your WSL with: `$ cd /mnt/c/Users/Grant/ec510/lectures/03-shell`. Adjust as needed.
+
+.right[*Continues on next slide...*]
 
 ---
 name: wsl-rstudio
 
-# WSL + RStudio Terminal
+# WSL (cont.)
 
-While it's easy enough to open up your WSL (e.g. Ubuntu) shell on its own, I recommend that Windows users make WSL their default RStudio Terminal too. 
+### ii) Access WSL through RStudio
 
+If you access WSL through RStudio, then it will conveniently configure your path to the present working directory. So, here's how to make WSL your default [RStudio Terminal](https://support.rstudio.com/hc/en-us/articles/115010737148-Using-the-RStudio-Terminal):
 - In RStudio, navigate to: *Tools > Terminal > Terminal Options...*. \[[Screenshot](pics/wsl-rstudio-1.png).\]
-- Click on the dropdown menu for *New terminals open with:*, select "Bash (Windows Subsystem for Linux)", and then click *OK*. \[[Screenshot](pics/wsl-rstudio-2.png).\]
+- Click on the dropdown menu for *New terminals open with* and select "Bash (Windows Subsystem for Linux)", Then click *OK*. \[[Screenshot](pics/wsl-rstudio-2.png).\]
 - Refresh your RStudio terminal (`Alt+Shift+R`). \[[Screenshot](pics/wsl-rstudio-3.png).\]
 - You should see the WSL Bash environment with the path automatically configured to the present working director, mount point and all. \[[Screenshot](pics/wsl-rstudio-4.png).\]
 
-As a Windows user, being able to access a true Bash shell conveniently from RStudio will make things much easier for you in my class. You can always revert back to a different shell later if you want. 
-- I strongly recommend that you at least use Git Bash, though. More details [here](https://support.rstudio.com/hc/en-us/articles/115010737148-Using-the-RStudio-Terminal).
-
 .footnote[(Back to [table of contents](#toc).)]
+
+--
+
+### Which option to choose?
+
+Both are fine, but I recommend option **(ii)**. As a Windows user, being able to access a true Bash shell (i.e. terminal) conveniently from RStudio will make things *much* easier for you in my class. You can always revert back to a different shell later if you want. 
 
 ```{r gen_pdf, include = FALSE, cache = FALSE, eval = TRUE}
 pagedown::chrome_print("03-shell.html", output = "03-shell.pdf")
