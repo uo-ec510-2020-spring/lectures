@@ -876,6 +876,6 @@ name: faq
 <img src="https://imgs.xkcd.com/comics/git_2x.png" height=500>
 </div>
 
-```{r gen_pdf, include = FALSE, cache = FALSE, eval = T}
+```{r gen_pdf, include = FALSE, cache = FALSE, eval = FALSE}
 pagedown::chrome_print("02-git.html", output = "02-git.pdf")
 ```
