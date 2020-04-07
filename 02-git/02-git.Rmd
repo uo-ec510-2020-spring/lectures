@@ -388,7 +388,7 @@ name: merge
 
 Turn to the person next to you. You are now partners. (Congratulations.)
 
-- P1: Invite P2 to join you as a collaborator on the "test" GitHub repo that you created earlier. (See the *Settings* tab of your repo.)
+- P1: Invite P2 to join you as a collaborator on the "test" GitHub repo that you created earlier. (Click the *Settings* tab of your repo. Then *Manage Access* -> *Invite teams of people*.)
 
 - P2: Clone P1's repo to your local machine.<sup>1</sup> Make some edits to the README (e.g. delete lines of text and add your own). Stage, commit and push these changes.
 
@@ -803,7 +803,7 @@ If you haven't done so already, now is a good time to clone/fork the course mate
 
 Now that you've learned the necessary basics, Assignment 1 is up on GitHub Classroom.
 - Impress me with your ggplot2 skills.
-- Deadline: Due by the *start* of our next lecture.
+- Deadline: Due a week from today.
 
 ---
 
