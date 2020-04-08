@@ -475,7 +475,7 @@ Again, this and other `man` tricks tricks are detailed in the help pages (hit "h
 
 # Help: cheat
 
-I also like the [cheat](https://github.com/chrisallenlane/cheat) utility, which provides a more readable summary / cheatsheet of various command. You'll need to install it first. (Linux and MacOS only.)
+I also like the [cheat](https://github.com/cheat/cheat) utility, which provides a more readable summary / cheatsheet of various command. You'll need to install it first. (Linux and MacOS only.)
 
 ```
 $ cheat ls
