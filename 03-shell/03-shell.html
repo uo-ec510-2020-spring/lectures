@@ -810,22 +810,34 @@ Beware of directory names that contain spaces. Say you have a directory called "
 # Listing files and their properties
 
 We're about to go into more depth about the `ls` command.
-- To do this effectively, it will be helpful if we're all working off the same group of files and folders.
-- Navigate to the directory containing these lecture notes (i.e. `03-shell`). Now list the contents of the  `examples/` sub-directory with the `-lh` option ("long format", "human readable").
+
+--
+
+This will be much easier to follow if we're all working with same group of files and folders.
+- Navigate to the "examples" sub-directory bundled together with these lecture notes. If you're working through RStudio's terminal, the following should work:
 
 
 ```bash
-$ # cd PathWhereYouClonedThisRepo/lectures/03-shell ## change as needed
-$ ls -lh examples
+$ cd 03-shell/examples ## change relative path as/if needed
+```
+
+
+--
+
+Now list the directory contents, using the `-lh` flags ("long format", "human readable").
+
+
+```bash
+$ ls -lh
 ```
 
 ```
 ## total 144K
-## drwxr-xr-x 2 grant users 4.0K Apr  7 15:42 ABC
+## drwxr-xr-x 2 grant users 4.0K Apr  9 15:07 ABC
 ## drwxr-xr-x 2 grant users 4.0K Jan 12  2019 Bad folder name
 ## -rwxr-xr-x 1 grant users   37 Jan 14  2019 hello.sh
-## drwxr-xr-x 2 grant users 4.0K Apr  7 15:42 meals
-## -rw-r--r-- 1 grant users   32 Apr  7 15:42 nursery.txt
+## drwxr-xr-x 2 grant users 4.0K Apr  8 22:01 meals
+## -rw-r--r-- 1 grant users   32 Apr  8 16:29 nursery.txt
 ## -rwxrwxrwx 1 grant users  153 Jan 12  2019 reps.txt
 ## -rw-r--r-- 1 grant users 120K Jan 12  2019 sonnets.txt
 ```
@@ -1020,11 +1032,11 @@ The syntax for copying is `$ cp object path/copyname`
 
 ```bash
 $ ## Create new "copies" sub-directory
-$ mkdir examples/copies
+$ mkdir copies
 $ ## Now copy across a file (with a new name)
-$ cp examples/reps.txt examples/copies/reps-copy.txt
+$ cp reps.txt copies/reps-copy.txt
 $ ## Show that we were successful
-$ ls examples/copies
+$ ls copies
 ```
 
 ```
@@ -1045,14 +1057,14 @@ The syntax for moving is `$ mv object path/newobjectname`
 
 ```bash
 $  ## Move the abc.txt file and show that it worked
-$ mv examples/ABC/abc.txt examples
-$ ls examples/ABC ## empty
+$ mv ABC/abc.txt .
+$ ls ABC ## empty
 ```
 
 ```bash
 $ ## Move it back again
-$ mv examples/abc.txt examples/ABC
-$ ls examples/ABC ## not empty
+$ mv abc.txt ABC
+$ ls ABC ## not empty
 ```
 
 ```
@@ -1066,8 +1078,8 @@ Note that "moving" an object within the same directory, but with the (newobjectn
 
 ```bash
 $  ## Rename reps-copy to reps2 by "moving" it with a new name
-$ mv examples/copies/reps-copy.txt examples/copies/reps2.txt
-$ ls examples/copies
+$ mv copies/reps-copy.txt copies/reps2.txt
+$ ls copies
 ```
 
 ```
@@ -1081,12 +1093,12 @@ $ ls examples/copies
 Speaking of renaming, a more convenient way to do this is with `rename`. 
 - The syntax is `pattern replacement file(s)`
 
-For example, say we want to change the file type (i.e. extension) of a particular file in the `examples/meals` directory.
+For example, say we want to change the file type (i.e. extension) of a particular file in the `meals` directory.
 
 
 ```bash
-$ rename csv TXT examples/meals/monday.csv
-$ ls examples/meals
+$ rename csv TXT meals/monday.csv
+$ ls meals
 ```
 
 ```
@@ -1106,12 +1118,12 @@ $ ls examples/meals
 Where `rename` really shines, however, is in conjunction with regular expressions and wildcards (more on the next slide).
 - This works especially well for dealing with a whole list of files or folders.
 
-For example, let's change _all_ of the file extensions in the `examples/meals` directory.
+For example, let's change _all_ of the file extensions in the `meals` directory.
 
 
 ```bash
-$ rename csv TXT examples/meals/*
-$ ls examples/meals
+$ rename csv TXT meals/*
+$ ls meals
 ```
 
 ```
@@ -1130,7 +1142,7 @@ Better change them back before we continue. (Confirm that this worked for yourse
 
 
 ```bash
-$ rename TXT csv examples/meals/*
+$ rename TXT csv meals/*
 ```
 
 ---
@@ -1143,22 +1155,22 @@ $ rename TXT csv examples/meals/*
  - Convenient when you want to copy, move, or delete a whole class of files.
   
   ```bash
-  $ cp examples/*.sh examples/copies ## Copy any file with an .sh extension to "copies"
-  $ rm examples/copies/* ## Delete everything in the "copies" directory
+  $ cp *.sh copies ## Copy any file with an .sh extension to "copies"
+  $ rm copies/* ## Delete everything in the "copies" directory
   ```
 
 2. Replace a single character with `?`
  - Convenient when you want to discriminate between similarly named files.
   
   ```bash
-  $ ls examples/meals/??nday.csv
-  $ ls examples/meals/?onday.csv
+  $ ls meals/??nday.csv
+  $ ls meals/?onday.csv
   ```
   
   ```
-  ## examples/meals/monday.csv
-  ## examples/meals/sunday.csv
-  ## examples/meals/monday.csv
+  ## meals/monday.csv
+  ## meals/sunday.csv
+  ## meals/monday.csv
   ```
 
 
@@ -1177,11 +1189,11 @@ The last command that I want to mention w.r.t. navigation is `find`.
 
 
 ```bash
-$ find examples -iname "monday.csv" ## will automatically do recursive
+$ find -iname "monday.csv" ## will automatically do recursive
 ```
 
 ```
-## examples/meals/monday.csv
+## ./meals/monday.csv
 ```
 
 ```bash
@@ -1189,10 +1201,10 @@ $ find . -iname "*.txt" ## must use "." to indicate pwd
 ```
 
 ```
-## ./examples/nursery.txt
-## ./examples/sonnets.txt
-## ./examples/reps.txt
-## ./examples/ABC/abc.txt
+## ./nursery.txt
+## ./sonnets.txt
+## ./reps.txt
+## ./ABC/abc.txt
 ```
 
 ```bash
@@ -1200,13 +1212,7 @@ $ find . -size +100k ## find files larger than 100 KB
 ```
 
 ```
-## ./examples/sonnets.txt
-## ./03-shell.html
-## ./03-shell.pdf
-## ./pics/wsl-rstudio-2.png
-## ./pics/wsl-rstudio-3.png
-## ./pics/wsl-rstudio-1.png
-## ./pics/wsl-rstudio-4.png
+## ./sonnets.txt
 ```
 ---
 class: inverse, center, middle
@@ -1234,11 +1240,11 @@ Let's demonstrate with a text file containing all of Shakespeare's Sonnets.&lt;s
 
 
 ```bash
-$ wc examples/sonnets.txt
+$ wc sonnets.txt
 ```
 
 ```
-##   3029  20701 122780 examples/sonnets.txt
+##   3029  20701 122780 sonnets.txt
 ```
 
 .footnote[
@@ -1266,7 +1272,7 @@ Again, let's demonstrate using Shakespeare's Sonnets. (This will overflow the sl
 
 
 ```bash
-$ cat -n examples/sonnets.txt
+$ cat -n sonnets.txt
 ```
 
 ```
@@ -4308,7 +4314,7 @@ $ cat -n examples/sonnets.txt
 ### Scroll: more and less
 
 The `more` and `less` commands provide extra functionality over `cat`. For example, they allow you to move through long text one page at a time.
-- Try this yourself with `$ more examples/sonnets.txt`
+- Try this yourself with `$ more sonnets.txt`
 - You can move forward and back using the "f" and "b" keys, and quit by hitting "q".
 
 ### Preview: head and tail
@@ -4317,8 +4323,8 @@ The `head` and `tail` commands let you limit yourself to a preview of the text, 
 
 
 ```bash
-$ head -n 3 examples/sonnets.txt ## First 3 rows
-$ # head examples/sonnets.txt ## First 10 rows (default)
+$ head -n 3 sonnets.txt ## First 3 rows
+$ # head sonnets.txt ## First 10 rows (default)
 ```
 
 ```
@@ -4337,7 +4343,7 @@ $ # head examples/sonnets.txt ## First 10 rows (default)
 
 
 ```bash
-$ tail -n 1 examples/sonnets.txt ## Last row
+$ tail -n 1 sonnets.txt ## Last row
 ```
 
 ```
@@ -4350,7 +4356,7 @@ However, there's one other neat option that I want to show you. By using the `-n
 
 
 ```bash
-$ tail -n +3024 examples/sonnets.txt ## Show everything from line 3024
+$ tail -n +3024 sonnets.txt ## Show everything from line 3024
 ```
 
 ```
@@ -4373,7 +4379,7 @@ For example, say we want to find the famous opening line to Shakespeare's [Sonne
 
 
 ```bash
-$ grep -n "Shall I compare thee" examples/sonnets.txt
+$ grep -n "Shall I compare thee" sonnets.txt
 ```
 
 ```
@@ -4383,8 +4389,8 @@ $ grep -n "Shall I compare thee" examples/sonnets.txt
 --
 
 By default, `grep` returns all matching patterns. 
-- What happens if you run `$ grep -n "summer" examples/sonnets.txt`?
-- Or, for that matter, `$ grep -n "the" examples/sonnets.txt`?
+- What happens if you run `$ grep -n "summer" sonnets.txt`?
+- Or, for that matter, `$ grep -n "the" sonnets.txt`?
 
 
 ---
@@ -4399,11 +4405,11 @@ Here's a simple example: Which days will I eat pasta this week?
 
 
 ```bash
-$ grep -Rl "pasta" examples/meals
+$ grep -Rl "pasta" meals
 ```
 
 ```
-## examples/meals/monday.csv
+## meals/monday.csv
 ```
 
 --
@@ -4432,7 +4438,7 @@ I'm going to show two basic examples without going into depth, but I strongly en
 
 
 ```bash
-$ cat examples/nursery.txt
+$ cat nursery.txt
 ```
 
 ```
@@ -4444,8 +4450,8 @@ Now, change "Jack" to "Bill".
 
 
 ```bash
-$ sed -i 's/Jack/Bill/g' examples/nursery.txt
-$ cat examples/nursery.txt
+$ sed -i 's/Jack/Bill/g' nursery.txt
+$ cat nursery.txt
 ```
 
 ```
@@ -4464,7 +4470,7 @@ $ cat examples/nursery.txt
 
 
 ```bash
-$ sed -e 's/\s/\n/g' &lt; examples/sonnets.txt | sort | uniq -c | sort -nr | head -10
+$ sed -e 's/\s/\n/g' &lt; sonnets.txt | sort | uniq -c | sort -nr | head -10
 ```
 
 ```
@@ -4484,7 +4490,7 @@ $ sed -e 's/\s/\n/g' &lt; examples/sonnets.txt | sort | uniq -c | sort -nr | hea
 
 &lt;/br&gt;
 
-PS &amp;mdash; You can also use double quotes (") instead of single ones (') for `sed` and `awk` commands. This can sometimes run you into trouble with special symbols or patterns in the text, though. (Mostly, I want you to be mindful of accidental matching or closing quotation mark pairs.)
+PS &amp;mdash; You can also use double quotes (") instead of single ones (') for `sed` and `awk` commands. This can sometimes run you into trouble with special symbols or patterns in the text, though. (Always be mindful of accidental matching or closing quotation mark pairs.)
 
 ---
 
@@ -4494,7 +4500,7 @@ We can remove duplicate lines in various ways in Bash, but I'll demonstrate usin
 
 
 ```bash
-$ cat examples/reps.txt
+$ cat reps.txt
 ```
 
 ```
@@ -4511,7 +4517,7 @@ There's a fair bit of repetition in this file (and a double entendre). Let's fix
 
 
 ```bash
-$ sort -ur examples/reps.txt
+$ sort -ur reps.txt
 ```
 
 ```
@@ -4602,7 +4608,7 @@ Let me demonstrate using a very simple example.
 
 
 ```bash
-$ cat -n examples/sonnets.txt | head -n100 | tail -n10
+$ cat -n sonnets.txt | head -n100 | tail -n10
 ```
 
 ```
@@ -4630,7 +4636,7 @@ An exercise: Say I want to pull out all of text from (but limited to) Sonnet 18.
 
 
 ```bash
-$ tail -n +336 examples/sonnets.txt | head -n14
+$ tail -n +336 sonnets.txt | head -n14
 ```
 
 ```
@@ -4748,18 +4754,18 @@ Here's a more realistic _for_ loop use-case that I use quite often: Combining (i
 
 --
 
-Say we want to combine all the "daily" files in the `examples/meals` directory into a single CSV, which I'll call `mealplan.csv`. Here's one attempt that incorporates various bash commands and tricks that we've learned so far. The basic idea is:
+Say we want to combine all the "daily" files in the `meals` directory into a single CSV, which I'll call `mealplan.csv`. Here's one attempt that incorporates various bash commands and tricks that we've learned so far. The basic idea is:
 1. Create a new (empty) CSV
 2. Then, loop over the relevant input files, appending their contents to our new CSV
 
 
 ```bash
 ## create an empty CSV
-$ touch examples/meals/mealplan.csv
+$ touch meals/mealplan.csv
 ## loop over the input files and append their contents to our new CSV
-$ for i in $(ls examples/meals/*day.csv)
+$ for i in $(ls meals/*day.csv)
 &gt; do 
-&gt;   cat $i &gt;&gt; examples/meals/mealplan.csv
+&gt;   cat $i &gt;&gt; meals/mealplan.csv
 &gt; done
 ```
 
@@ -4775,7 +4781,7 @@ Hmmm. Sort of, but we need to get rid of the repeating header.
 
 
 ```bash
-$ cat examples/meals/mealplan.csv
+$ cat meals/mealplan.csv
 ```
 
 ```
@@ -4807,7 +4813,7 @@ Can you think of a way?
 Let's try again. First delete the old file so we can start afresh.
 
 ```bash
-$ rm -f examples/meals/mealplan.csv ## delete old file
+$ rm -f meals/mealplan.csv ## delete old file
 ```
 
 --
@@ -4819,11 +4825,11 @@ Here's our adapted gameplan:
 
 ```bash
 ## create a new CSV by redirecting the top line of any file
-$ head -1 examples/meals/monday.csv &gt; examples/meals/mealplan.csv
+$ head -1 meals/monday.csv &gt; meals/mealplan.csv
 ## loop over the input files, appending everything after the top line
-$ for i in $(ls examples/meals/*day.csv)
+$ for i in $(ls meals/*day.csv)
 &gt; do 
-&gt;   tail -n +2 $i &gt;&gt; examples/meals/mealplan.csv
+&gt;   tail -n +2 $i &gt;&gt; meals/mealplan.csv
 &gt; done
 ```
 
@@ -4835,7 +4841,7 @@ It worked!
 
 
 ```bash
-$ cat examples/meals/mealplan.csv
+$ cat meals/mealplan.csv
 ```
 
 ```
@@ -4879,7 +4885,7 @@ Let's look at the contents of a short script that I've included in the examples 
 
 
 ```bash
-$ cat examples/hello.sh
+$ cat hello.sh
 ```
 
 ```
@@ -4931,13 +4937,12 @@ echo -e "\nHello World!\n"
 - `#!/bin/sh` is a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix), indicating which program to run the command with (here: any Bash-compatible shell). However, it is typically ignored (note that it begins with the hash comment character.)
 - `echo -e "\nHello World!\n"` is the actual command that we want to run.
 
-To run this simple script, you can just type in the file name and press enter.
+To run this simple script, you can just type in the relative path of and press enter. (The relative path is needed, otherwise bash thinks `hello.sh` is an internal command.)
 
 
 ```bash
-$ examples/hello.sh
-$ # bash examples/hello.sh ## Also works
-
+$ ./hello.sh
+$ # bash hello.sh ## Also works (and doesn't need leading "./")
 ```
 
 ```
@@ -4955,7 +4960,7 @@ Say you want to edit my (amazing) script.
 We have already seen how to append text lines to a file, but when it comes to larger jobs or more complicated editing work, you're better off using [nano](https://www.nano-editor.org/). 
 - In-built Unix shell text editor. (**Windows users**, see [here](https://stackoverflow.com/questions/36802996/bash-nano-command-not-found-at-windows-git-bash).)
 
-Open up the script in nano by typing `$ nano examples/hello.sh`. 
+Open up the script in nano by typing `$ nano hello.sh`. 
 - Note that the functionality is more limited than a normal text editor.
 - Once you are finished editing, hit "Ctrl+X", then "y" and enter to exit.
 - Finally, run the edited version of the script.
@@ -5046,15 +5051,6 @@ drwxr-xr-x 2 grant users 4.0K Jan 12 22:12  ABC
 
 We can change the permissions and ownership of this folder with the `chmod` and `chown` commands, respectively. We'll now review these in turn.
 - Note that I'm going to use the "recursive" option (i.e. `-R`) in the examples that follow, but only because `ABC/` is a directory. You can drop that when modifying individual files.
-
---
-
-PS — I'm going to skip writing out the full path for this next section to save on typing. Now is a a good time to move into the `examples/` directory if you want to follow along with my commands literally.
-
-
-```bash
-$ cd examples
-```
 
 ---
 
@@ -5150,7 +5146,7 @@ I know we covered a _lot_ of ground today. I hope that I've given you a sense of
 - My main goal has been to "demystify" the shell, so that you aren't intimidated when we use shell commands later on.
 
 At the same time, there's loads that we didn't cover.
-- Environment variables, SSH, memory management (e.g. [top](https://ss64.com/bash/top.html) and [htop](https://hisham.hm/htop/)), GNU parallel, etc.
+- Environment variables, SSH, memory management (e.g. [top](https://ss64.com/bash/top.html) and [htop](https://hisham.hm/htop/)), automating tasks (e.g. [cron jobs](https://www.tecmint.com/create-and-manage-cron-jobs-on-linux/)), GNU parallel, etc.
 - We'll get to some of these topics in the later lectures, but please try to work some of the suggested exercises on the next slide and make use of the recommended readings.
  
 
@@ -5160,8 +5156,8 @@ At the same time, there's loads that we didn't cover.
 
 ### Exercises
 
-Navigate to the `examples/` sub-directory associated with this lecture. I want you to play around with the contents using some of the different Bash commands we practiced today.
-- Change the permissions on an indivdual file or a whole directory.
+I want you to continue playing around with some of the different Bash commands that we practiced today.
+- Change the permissions on an individual file or a whole directory.
 - Read in (or fix) some lines of text from one file and pipe them to another file.
 - Count the number of times Shakespeare refers to "mistress" or "love" in his Sonnets.
 - Write a new bash script and execute it.
@@ -5250,6 +5246,7 @@ If you access WSL through RStudio, then it will conveniently configure your path
 ### Which option to choose?
 
 Both are fine, but I recommend option **(ii)**. As a Windows user, being able to access a true Bash shell (i.e. terminal) conveniently from RStudio will make things *much* easier for you in my class. You can always revert back to a different shell later if you want. 
+
 
 
     </textarea>
