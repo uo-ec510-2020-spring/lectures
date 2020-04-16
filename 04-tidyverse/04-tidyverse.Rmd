@@ -836,6 +836,6 @@ class: inverse, center, middle
 # Next lecture: Data cleaning and wrangling: (2) data.table
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
-```{r gen_pdf, include = FALSE, cache = FALSE, eval = F}
+```{r gen_pdf, include = FALSE, cache = FALSE, eval = TRUE}
 pagedown::chrome_print("04-tidyverse.html", output = "04-tidyverse.pdf")
 ```
