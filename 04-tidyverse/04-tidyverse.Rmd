@@ -363,6 +363,10 @@ starwars %>%
   select(alias=name, crib=homeworld, sex=gender) 
 ```
 
+--
+
+If you just want to rename columns without subsetting them, you can use `rename`. Try this now by replacing `select(...)` in the above code chunk with `rename(...)`.
+
 ---
 
 # 3) dplyr::select *cont.*
