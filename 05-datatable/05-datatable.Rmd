@@ -53,6 +53,8 @@ opts_chunk$set(
 
 5. [Manipulating columns: DT[, j]](#j)
 
+6. [Grouping: DT[, , by]](#by)
+
 ---
 class: inverse, center, middle
 name: prologue
@@ -112,7 +114,7 @@ Before we get into specifics, here are a few examples to whet your appetite...
 
 ---
 
-# Why learn data.table? (*cont.)
+# Why learn data.table? (cont.)
 
 ### 1) Concise
 
@@ -136,7 +138,7 @@ starwars_dt[species=="Human", mean(height), by=homeworld]
 ---
 name:fast
 
-# Why learn data.table? (*cont.)
+# Why learn data.table? (cont.)
 
 ### 2) Insanely fast
 
@@ -167,7 +169,7 @@ microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), times = 10)
 
 ---
 
-# Why learn data.table? (*cont.)
+# Why learn data.table? (cont.)
 
 ### 3) Memory efficient
 
@@ -454,7 +456,7 @@ Multiple filters/conditions are fine too:
 
 --
 
-Note that we don't actually need commas when we're only subsetting on "i" (i.e. no "j" or "by" components).
+Note that we don't actually need commas when we're only subsetting on `i` (i.e. no `j` or `by` components).
 - `DT[x=="string"]` is equivalent to `DT[x=="string", ]`
 - `DT[1:10]` is equivalent to `DT[1:10, ]`
 - etc.
@@ -492,7 +494,7 @@ name: j
 
 ---
 
-# One slot to rule them all
+# One j slot to rule them all
 
 Recall some of the dplyr verbs that we used to manipulate our variables in different ways:
 
@@ -516,7 +518,7 @@ However, this concision requires a few syntax tweaks to how we change and assign
 
 ---
 
-# Modifying columns `:=`
+# Modifying columns :=
 
 To add, delete, or change columns in data.table, we use the **`:=`** operator.
 - Known as the *walrus* operator (geddit??)
@@ -530,7 +532,7 @@ For example,
 
 --
 
-Again, note that `:=` is *modifying by reference* (i.e. in place). So we don't have to (re)assign the object to save these changes.
+Again, note that `:=` is *modifying by reference*, i.e. in place. So we don't have to (re)assign the object to save these changes.
 
 --
 
@@ -544,7 +546,35 @@ DT[, x_sq := x^2][] ## Adding [] prints the result.
 
 ---
 
-# Modifying columns `:=` (*cont.)
+# Modifying columns := (cont.)
+
+### Sub-assign by reference
+
+One really cool implication of `:=` is data.table's [sub-assign by reference](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html#ref-i-j) functionality. As a really simple example, consider a new fake dataset.
+
+```{r subassign1, cache=FALSE}
+DT2 = data.table(a = -2:2, b = LETTERS[1:5])
+```
+
+--
+
+Now, imagine we want to locate all rows where "a" is negative and replace the corresponding "b" cell with NA. 
+
+--
+
+- In dplyr you'd have to do something like `...mutate(b = ifelse(a<0, NA, a))`.
+--
+
+- In data.table simply specify which rows to target on `i` and then sub-assign directly.
+
+```{r subassign2, cache=FALSE}
+DT2[a < 0, b := NA][]
+```
+
+
+---
+
+# Modifying columns := (cont.)
 
 To modify multiple columns simultaneously, we have two options.
 
@@ -597,9 +627,21 @@ DT %>%
 
 ---
 
+# Modifying columns := (cont.)
+
+To remove a column from your dataset, set it to NULL.
+
+```{r mod_cols5, cache=FALSE}
+DT[, y_name := NULL]
+DT
+```
+
+
+---
+
 # Subsetting on columns (select)
 
-We can also use the "j" slot to subset our data on columns. I'll return to the starwars dataset for these...
+We can also use the `j` slot to subset our data on columns. I'll return to the starwars dataset for these examples...
 
 --
 
@@ -619,7 +661,7 @@ starwars_dt[, .(name, height, mass, homeworld)] %>% head(2)
 
 ---
 
-# Aside: What's with the `.()`?
+# Aside: What's with the .()?
 
 We've now seen it in a couple places, e.g the previous slide (and [this slide](#intro) from earlier if you were paying close attention).
 
@@ -651,10 +693,35 @@ You can also exclude columns through negation. Try this next code chunk yourself
 starwars_dt[, !c("name", "height")]
 ```
 
+--
+
+And, you can rename a column as follows (again, run this yourself):
+
+```{r, eval=FALSE}
+setnames[starwars_dt, old = "homeworld", new = "crib"][]
+## Make sure you change back since I'll be using the homeworld col for grouping...
+setnames[starwars_dt, old = "crib", new = "homeworld"]
+```
+
+
+--
+
+### General comment
+
+While it offers some important performance gains, I have to admit that I find data.table's column subsetting approach less user-friendly than dplyr's `select()` and `rename()`... On the plus, side, you can still use dplyr verbs on data.tables!
+
+```{r, eval=FALSE}
+starwars_dt %>% select(homeworld, everything()) ## Try this yourself
+```
+
+--
+
+I don't want to preempt myself, though. I'll get back to dplyr+data.table functionality at the end of the lecture....
+
 ---
 # Aggregating
 
-Finally, we can do summary manipulations in "j".
+Finally, we can do aggregating manipulations in `j`.
 
 ```{r simple_agg1, cache=FALSE}
 starwars_dt[, mean(height, na.rm=T)]
@@ -666,10 +733,20 @@ Note that without the `:=` operator, we don't keep anything unless we assign it.
 
 ```{r simple_agg2,cache=FALSE}
 starwars_dt[, mean_height := mean(height, na.rm=T)] %>%
-  .[, .(name, height, mean_height)] %>%
-  head()
+  .[, .(name, height, mean_height)] %>% ## Just select a few columns to display on the slide
+  head(5)
 ```
 
+--
+
+Of course, aggregation is much more powerful when combined with `by`, which provides a nice segue to our next section...
+
+---
+name: by
+class: inverse, center, middle
+
+# Grouping: DT[, , by]
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 ---
 name: summary
@@ -677,6 +754,9 @@ class: inverse, center, middle
 
 # Summary
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+# Summary
 
 --
 
