@@ -540,7 +540,7 @@ name: j
 
 ---
 
-# One j slot to rule them all
+# One slot (j) to rule them all
 
 Recall some of the dplyr verbs that we used to manipulate our variables in different ways:
 
@@ -774,24 +774,23 @@ starwars_dt[, .(name, height, mass, homeworld)] %&gt;% head(2)
 
 # Aside: What's with the .()?
 
-We've now seen it in a couple places, e.g the previous slide (and [this slide](#intro) from earlier if you were paying close attention).
-
-`.()` is just a data.table shortcut for `list()`. 
-
---
+We've now seen `.()` in a couple places, e.g the previous slide (and [this slide](#intro) from earlier if you were paying close attention).
+- `.()` is just a data.table shortcut for `list()`. 
 
 We'll be using `.()` quite liberally once we start working subsetting and/or grouping by multiple variables at a time.
 
---
-
-You can think of it as another one of data.table's syntactical quirks. But, really, it's just there to give you more options. In general, you can use these three forms interchangeably in data.table:
+You can think of it as one of data.table's syntactical quirks. But, really, it's just there to give you more options. In general, you can use these three forms interchangeably in data.table:
 - `.(var1, var2, ...)`
 - `list(var1, var2, ...)`
 - `c("var1", "var2", ...)`
 
 --
 
-I like the `.()` syntax best &amp;mdash; less typing! &amp;mdash; but feel free to substitute with your preferred syntax.
+I like the `.()` syntax best &amp;mdash; less typing! &amp;mdash; but feel free to substitute with your preferred syntax. 
+
+--
+
+Okay, back to subsetting on columns...
 
 
 ---
@@ -805,7 +804,6 @@ You can also exclude columns through negation. Try this next code chunk yourself
 starwars_dt[, !c("name", "height")]
 ```
 
---
 
 And, you can rename a column as follows (again, run this yourself):
 

@@ -173,11 +173,11 @@ microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), times = 10)
 
 ### 3) Memory efficient
 
-Comparing and measuring memory use is [complicated](https://stackoverflow.com/q/61376970/4115816). But see Tyson Barret's post [here](https://tysonbarrett.com//jekyll/update/2019/10/11/speed_of_joins/) for an example where data.table has a clear advantage.
+Measuring and comparing memory use [is](https://twitter.com/jimhester_/status/1182934355141898245) [complicated](https://cran.r-project.org/doc/FAQ/R-FAQ.html#Why-is-R-apparently-not-releasing-memory_003f). But see Tyson Barret's post [here](https://tysonbarrett.com//jekyll/update/2019/10/11/speed_of_joins/) for an example where data.table has a clear advantage.
 
 ### 4) Features and 5) No dependencies
 
-I'll lump these together, since they really have to do with the stability of your code over time. Just to emphasise the point about dependencies, though:
+I'll lump these together, since they really have to do with the stability of your code over time. Just to emphasise the point about [dependencies](http://www.tinyverse.org/), though:
 
 ```{r dependencies_dt, eval=FALSE}
 tools::package_dependencies("data.table", recursive = TRUE)[[1]]
@@ -494,7 +494,7 @@ name: j
 
 ---
 
-# One j slot to rule them all
+# One slot (j) to rule them all
 
 Recall some of the dplyr verbs that we used to manipulate our variables in different ways:
 
@@ -663,24 +663,23 @@ starwars_dt[, .(name, height, mass, homeworld)] %>% head(2)
 
 # Aside: What's with the .()?
 
-We've now seen it in a couple places, e.g the previous slide (and [this slide](#intro) from earlier if you were paying close attention).
-
-`.()` is just a data.table shortcut for `list()`. 
-
---
+We've now seen `.()` in a couple places, e.g the previous slide (and [this slide](#intro) from earlier if you were paying close attention).
+- `.()` is just a data.table shortcut for `list()`. 
 
 We'll be using `.()` quite liberally once we start working subsetting and/or grouping by multiple variables at a time.
 
---
-
-You can think of it as another one of data.table's syntactical quirks. But, really, it's just there to give you more options. In general, you can use these three forms interchangeably in data.table:
+You can think of it as one of data.table's syntactical quirks. But, really, it's just there to give you more options. In general, you can use these three forms interchangeably in data.table:
 - `.(var1, var2, ...)`
 - `list(var1, var2, ...)`
 - `c("var1", "var2", ...)`
 
 --
 
-I like the `.()` syntax best &mdash; less typing! &mdash; but feel free to substitute with your preferred syntax.
+I like the `.()` syntax best &mdash; less typing! &mdash; but feel free to substitute with your preferred syntax. 
+
+--
+
+Okay, back to subsetting on columns...
 
 
 ---
@@ -693,7 +692,6 @@ You can also exclude columns through negation. Try this next code chunk yourself
 starwars_dt[, !c("name", "height")]
 ```
 
---
 
 And, you can rename a column as follows (again, run this yourself):
 
@@ -737,7 +735,16 @@ starwars_dt[, mean_height := mean(height, na.rm=T)] %>%
   head(5)
 ```
 
+---
+# Aggregating (cont.)
+
+data.table also provides several convenience symbols for common aggregation tasks in `j`.
+
+For example, we can quickly count the number of observations using 
+
 --
+
+</br>
 
 Of course, aggregation is much more powerful when combined with `by`, which provides a nice segue to our next section...
 
