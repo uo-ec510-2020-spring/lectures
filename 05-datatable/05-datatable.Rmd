@@ -53,7 +53,7 @@ opts_chunk$set(
 
 5. [Manipulating columns: DT[, j]](#j)
 
-6. [Grouping: DT[, , by]](#by)
+6. [Group by: DT[, , by]](#by)
 
 ---
 class: inverse, center, middle
@@ -163,9 +163,9 @@ microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), times = 10)
 
 --
 
-.right[.small90[
-**Aside:** Thanks to [Keith Head](https://twitter.com/ckhead) for suggesting this example.
-]]
+.small90[
+**Result:** data.table is 45x faster! (Thanks to [Keith Head](https://twitter.com/ckhead) for this example.)
+]
 
 ---
 
@@ -230,7 +230,7 @@ We've already seen that the tidyerse provides its own enhanced version of a data
 
 --
 
-The same is true for data.table. In fact, the data.table functions only work on objects that have been converted to data.tables first.
+The same is true for data.table. In fact, data.table functions only work on objects that have been converted to data.tables first.
 - Beyond simple visual enhancements (similar to tibbles), the specialised internal structure of data.table objects is a key reason why the package is so fast. (More [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html#what-is-datatable-1a) and [here](https://twitter.com/matloff/status/1131372631372918784).)
 
 --
@@ -248,7 +248,7 @@ To create a data.table, we have a couple of options:
 
 # data.table syntax
 
-All data.table objects take the same basic syntax:
+All data.tables accept the same basic syntax:
 
 .center[
 .large2[DT[<span style='color: #66C2A5;'>i</span>, <span style='color: #FC8D62;'>j</span>, <span style='color: #8DA0CB;'>by</span>]]
@@ -273,7 +273,7 @@ While the tidyverse tends to break up operations step-by-step, data.table aims t
 
 We'll dive into the details (and quirks) of data.table shortly. 
 
-But first, a quick side-by-side comparison with dplyr, since that will help to orientate us for the rest of the lecture. Using our starwars dataset, say we want to know:
+But first, a quick side-by-side comparison example with dplyr, since that will help to orientate us for the rest of the lecture. Using our starwars dataset, say we want to know:
 > What is the average height of the human characters by gender?
 
 --
@@ -512,7 +512,7 @@ data.table recognizes that all of these verbs are just different versions of tel
 
 --
 
-However, this concision requires a few syntax tweaks to how we change and assign variables in our dataset.
+However, this concision requires a few syntax tweaks w.r.t. how we change and assign variables in our dataset.
 - Some people find this off-putting (or, at least, weird) when they first come to data.table.
 - I hope to convince you that these syntax tweaks aren't actually that difficult to grok and give us a *lot* of power in return.
 
@@ -568,7 +568,7 @@ Now, imagine we want to locate all rows where "a" is negative and replace the co
 - In data.table, simply specify which rows to target (`i`) and then sub-assign (`j`) directly.
 
 ```{r subassign2, cache=FALSE}
-DT2[a < 0, b := NA][]
+DT2[a < 0, b := NA][] ## Again, just adding the second [] to print to screen
 ```
 
 
@@ -668,14 +668,14 @@ We've now seen `.()` in a couple places, e.g the previous slide (and [this slide
 
 We'll be using `.()` quite liberally once we start working subsetting and/or grouping by multiple variables at a time.
 
-You can think of it as one of data.table's syntactical quirks. But, really, it's just there to give you more options. In general, you can use these three forms interchangeably in data.table:
+You can think of it as one of data.table's syntactical quirks. But, really, it's just there to give you more options. You can often &mdash; if not always &mdash; use these three forms interchangeably in data.table:
 - `.(var1, var2, ...)`
 - `list(var1, var2, ...)`
 - `c("var1", "var2", ...)`
 
 --
 
-I like the `.()` syntax best &mdash; less typing! &mdash; but feel free to substitute with your preferred syntax. 
+I like the `.()` syntax best &mdash; less typing! &mdash; but each to their own.
 
 --
 
@@ -696,17 +696,16 @@ starwars_dt[, !c("name", "height")]
 And, you can rename a column as follows (again, run this yourself):
 
 ```{r, eval=FALSE}
-setnames[starwars_dt, old = "homeworld", new = "crib"][]
-## Make sure you change back since I'll be using the homeworld col for grouping...
-setnames[starwars_dt, old = "crib", new = "homeworld"]
+setnames[starwars_dt, old = "name", new = "alias"][]
+## Safer to change it back, just in case we use "name" on a later slide again
+setnames[starwars_dt, old = "alias", new = "name"]
 ```
-
 
 --
 
 ### General comment
 
-While it offers some important performance gains, I have to admit that I find data.table's column subsetting approach less user-friendly than dplyr's `select()` and `rename()`... On the plus, side, you can still use dplyr verbs on data.tables!
+While it offers some important performance gains, I have to admit that I find data.table's column subsetting approach less user-friendly than dplyr's `select()` and `rename()`... On the plus, side, you can still use dplyr verbs on data.tables.
 
 ```{r, eval=FALSE}
 starwars_dt %>% select(homeworld, everything()) ## Try this yourself
@@ -727,33 +726,168 @@ starwars_dt[, mean(height, na.rm=T)]
 
 --
 
-Note that without the `:=` operator, we don't keep anything unless we assign it. Compare:
+Note that we don't keep anything unless we assign the result to a new object. If you want to add the new aggregated column to your original dataset, use `:=`.
 
 ```{r simple_agg2,cache=FALSE}
-starwars_dt[, mean_height := mean(height, na.rm=T)] %>%
-  .[, .(name, height, mean_height)] %>% ## Just select a few columns to display on the slide
+starwars_dt[, mean_height := mean(height, na.rm=T)] %>% ## Add mean height as a column
+  .[, .(name, height, mean_height)] %>% ## Just display a few columns on the slide
   head(5)
 ```
 
 ---
 # Aggregating (cont.)
 
-data.table also provides several convenience symbols for common aggregation tasks in `j`.
+data.table also provides specialised convenience [symbols](https://rdatatable.gitlab.io/data.table/reference/special-symbols.html) for common aggregation tasks in `j`.
 
-For example, we can quickly count the number of observations using 
+For example, we can quickly count the number of observations using `.N`.
+
+```{r starwars_N, cache=FALSE}
+starwars_dt[, .N]
+```
 
 --
 
-</br>
-
-Of course, aggregation is much more powerful when combined with `by`, which provides a nice segue to our next section...
+Of course, this is a pretty silly example since it's just going to give us the total number of rows in the dataset.
+- Like most forms of aggregation, `.N` is much more interesting when applied it is by group.
+- This provides a nice segue to our next section...
 
 ---
 name: by
 class: inverse, center, middle
 
-# Grouping: DT[, , by]
+# Group by: DT[, , by]
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# by
+
+data.table's `by` argument functions very similarly to the `dplyr::group_by` equivalent. Try these yourself:
+
+- `starwars_dt[, mean(height, na.rm=T), by = species]`: Collapse by single variable
+- `starwars_dt[, .(species_height = mean(height, na.rm=T)), by = species]`: As above, but explicitly name the summary variable
+- `starwars_dt[, mean(mass, na.rm=T), by = height>190]`: Conditionals work too.
+- `starwars_dt[, species_n := .N, by = species][]`: Add an aggregated column to the data (here: number of observations by species group)
+
+--
+
+To perform aggregations by multiple variables, we'll use the `.()` syntax again.
+
+```{r by1, cache=FALSE}
+starwars_dt[, .(mean_height = mean(height, na.rm=T)), by = .(species, homeworld)] %>%
+  head(4)
+```
+
+---
+
+# Efficient subsetting with .SD
+
+We've seen how to group by multiple variables. But what if we want to *summarise* multiple variables (regardless of how we are grouping)?
+
+One solution is to again use `.()` and write everything out, e.g.
+
+```{r, eval=FALSE}
+## Run yourself if you'd like to check the output
+starwars_dt[, 
+            .(mean(height, na.rm=T), mean(mass, na.rm=T), mean(birth_year, na.rm=T)), 
+            by = species]
+```
+--
+
+But this soon become tedious. Imagine we have even more variables. Do we really have to write out `mean(..., na.rm=T)` for each one?
+
+--
+
+Fortunately, the answer is "no". data.table provides a special `.SD` symbol for **s**ubsetting **d**ata. In truth, .SD can do a [lot more](https://rdatatable.gitlab.io/data.table/articles/datatable-sd-usage.html) than what I'm about to show you, but here's how it would work in the present case...
+
+.right[*See next slide.*]
+
+---
+
+# Efficient subsetting with .SD (cont.)
+
+```{r sd_cols1}
+starwars_dt[, 
+            lapply(.SD, mean, na.rm=T),
+            by = species, 
+            .SDcols = c("height", "mass", "birth_year")] %>% 
+  head(2) ## Just keep everything on the slide
+```
+
+---
+count: false
+
+# Efficient subsetting with .SD (cont.)
+
+```{r sd_cols2}
+starwars_dt[, 
+            lapply(.SD, mean, na.rm=T), #<<
+            by = species, 
+            .SDcols = c("height", "mass", "birth_year")] %>%
+  head(2) ## Just keep everything on the slide
+```
+
+- First we say what we want to *do* on `.SD` (i.e. our data subset). In this case, we want to get the mean for each element.<sup>1</sup>
+
+.footnote[.small90[
+<sup>1</sup> In practical terms, we do this by iterating over each element with the base `lapply()` function. We'll learn more about iteration once we get to the programming section of the course.
+
+<span style='color: #FAFAFA;'><sup>2</sup> One annoyance I have is that the .() syntax doesn't work for .SDcols. However, note that you can feed it consecutive columns without quotes, e.g. .SDcols = height:mass. See here.</span>
+]]
+
+---
+count: false
+
+# Efficient subsetting with .SD (cont.)
+
+```{r sd_cols3}
+starwars_dt[, 
+            lapply(.SD, mean, na.rm=T), 
+            by = species, 
+            .SDcols = c("height", "mass", "birth_year")] %>% #<<
+  head(2) ## Just keep everything on the slide
+```
+
+- First we say what we want to *do* on `.SD` (i.e. our data subset). In this case, we want to get the mean for each element.<sup>1</sup>
+- Next, we specify *which columns* to subset with the `.SDcols` argument.<sup>2</sup>
+
+.footnote[.small90[
+<sup>1</sup> In practical terms, we do this by iterating over each element with the base `lapply()` function. We'll learn more about iteration once we get to the programming section of the course.
+
+<sup>2</sup> One annoyance I have is that the `.()` syntax doesn't work for .SDcols. However, note that you can feed it consecutive columns without quotes, e.g. `.SDcols = height:mass`. See [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html#how-can-we-specify-just-the-columns-we-would-like-to-compute-the-mean-on).
+]]
+
+---
+
+# Efficient subsetting with .SD (cont.)
+
+Just to add: We need only specify `.SDcols` if we want to subset specific parts of the data. 
+
+If we instead want to apply the same function on *all* the variables in our dataset, then `.SD` by itself will suffice. 
+
+As a quick example, recall our earlier DT object that contains only numeric variables
+
+```{r, cache=FALSE}
+DT
+```
+
+We can obtain the mean for each variable as follows.
+
+```{r, cache=FALSE}
+DT[, lapply(.SD, mean)]
+```
+
+---
+
+# keyby
+
+The last thing I want to mention w.r.t. `by` is it's close relative: `keyby`.
+
+The `keyby` argument works exactly like `by` (you can use it as a drop-in replacement), except that it orders the results and creates a **key** that will allow for various performance improvements.
+
+[Keys](https://rdatatable.gitlab.io/data.table/articles/datatable-keys-fast-subset.html) in data.table are *extremely* powerful &mdash; as in, yields 100x additional speed-ups for certain operations &mdash; and are probably deserving of a whole section all on their own. 
+
+However, I'll simply try to demonstrate some of their power in the next brief section on joins...
 
 ---
 name: summary
