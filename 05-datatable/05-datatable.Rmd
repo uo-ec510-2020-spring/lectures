@@ -562,10 +562,10 @@ Now, imagine we want to locate all rows where "a" is negative and replace the co
 
 --
 
-- In dplyr you'd have to do something like `...mutate(b = ifelse(a<0, NA, a))`.
+- In dplyr you'd have to do something like `...mutate(b = ifelse(a < 0, NA, b))`.
 --
 
-- In data.table simply specify which rows to target on `i` and then sub-assign directly.
+- In data.table, simply specify which rows to target (`i`) and then sub-assign (`j`) directly.
 
 ```{r subassign2, cache=FALSE}
 DT2[a < 0, b := NA][]
