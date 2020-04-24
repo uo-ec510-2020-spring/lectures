@@ -748,7 +748,7 @@ starwars_dt[, .N]
 --
 
 Of course, this is a pretty silly example since it's just going to give us the total number of rows in the dataset.
-- Like most forms of aggregation, `.N` is much more interesting when applied it is by group.
+- Like most forms of aggregation, `.N` is much more interesting when it is applied by group.
 - This provides a nice segue to our next section...
 
 ---
@@ -762,7 +762,7 @@ class: inverse, center, middle
 
 # by
 
-data.table's `by` argument functions very similarly to the `dplyr::group_by` equivalent. Try these yourself:
+data.table's `by` argument functions very similarly to the `dplyr::group_by` equivalent. Try these next few examples in your own R console:
 
 - `starwars_dt[, mean(height, na.rm=T), by = species]`: Collapse by single variable
 - `starwars_dt[, .(species_height = mean(height, na.rm=T)), by = species]`: As above, but explicitly name the summary variable
@@ -782,7 +782,7 @@ starwars_dt[, .(mean_height = mean(height, na.rm=T)), by = .(species, homeworld)
 
 # Efficient subsetting with .SD
 
-We've seen how to group by multiple variables. But what if we want to *summarise* multiple variables (regardless of how we are grouping)?
+We've seen how to group by multiple variables. But what if we want to *summarise* multiple variables, regardless of how we are grouping?
 
 One solution is to again use `.()` and write everything out, e.g.
 
@@ -832,7 +832,7 @@ starwars_dt[,
 .footnote[.small90[
 <sup>1</sup> In practical terms, we do this by iterating over each element with the base `lapply()` function. We'll learn more about iteration once we get to the programming section of the course.
 
-<span style='color: #FAFAFA;'><sup>2</sup> One annoyance I have is that the .() syntax doesn't work for .SDcols. However, note that you can feed it consecutive columns without quotes, e.g. .SDcols = height:mass. See here.</span>
+<span style='color: #FAFAFA;'><sup>2</sup> One annoyance I have is that the .() syntax doesn't work for .SDcols. However, note that you can at least feed it consecutive columns without quotes, e.g. .SDcols = height:mass. See here.</span>
 ]]
 
 ---
@@ -854,7 +854,7 @@ starwars_dt[,
 .footnote[.small90[
 <sup>1</sup> In practical terms, we do this by iterating over each element with the base `lapply()` function. We'll learn more about iteration once we get to the programming section of the course.
 
-<sup>2</sup> One annoyance I have is that the `.()` syntax doesn't work for .SDcols. However, note that you can feed it consecutive columns without quotes, e.g. `.SDcols = height:mass`. See [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html#how-can-we-specify-just-the-columns-we-would-like-to-compute-the-mean-on).
+<sup>2</sup> One annoyance I have is that the `.()` syntax doesn't work for .SDcols. However, note that you can at least feed it consecutive columns without quotes, e.g. `.SDcols = height:mass`. See [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html#how-can-we-specify-just-the-columns-we-would-like-to-compute-the-mean-on).
 ]]
 
 ---
@@ -865,11 +865,15 @@ Just to add: We need only specify `.SDcols` if we want to subset specific parts 
 
 If we instead want to apply the same function on *all* the variables in our dataset, then `.SD` by itself will suffice. 
 
-As a quick example, recall our earlier DT object that contains only numeric variables
+--
+
+As a quick example, recall our earlier DT object that contains only numeric variables.
 
 ```{r, cache=FALSE}
 DT
 ```
+
+--
 
 We can obtain the mean for each variable as follows.
 
