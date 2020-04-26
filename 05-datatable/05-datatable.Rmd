@@ -3,7 +3,7 @@ title: "Big Data in Economics"
 # subtitle: "<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>"
 subtitle: "Lecture 5: Data cleaning & wrangling: (2) data.table"
 author: "Grant McDermott"
-date: "University of Oregon | [EC 510](https://github.com/uo-ec510-2020-spring)" #"`r format(Sys.time(), '%d %B %Y')`"
+date: "University of Oregon | [EC 510](https://github.com/uo-ec510-2020-spring/lectures)" #"`r format(Sys.time(), '%d %B %Y')`"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, metropolis-fonts, "libs/cols.css"] 
@@ -53,7 +53,9 @@ opts_chunk$set(
 
 5. [Manipulating columns: DT[, j]](#j)
 
-6. [Group by: DT[, , by]](#by)
+6. [Grouping: DT[, , by]](#by)
+
+7. [Keys](#keys)
 
 ---
 class: inverse, center, middle
@@ -148,7 +150,7 @@ name:fast
 collapse_dplyr = function() {
   storms %>%
     group_by(name, year, month, day) %>% 
-    summarize(wind = mean(wind), pressure = mean(pressure), category = first(category))
+    summarize(wind = mean(wind), pressure = mean(pressure), category = dplyr::first(category))
   }
 
 storms_dt = as.data.table(storms)
@@ -164,7 +166,7 @@ microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), times = 10)
 --
 
 .small90[
-**Result:** data.table is 45x faster! (Thanks to [Keith Head](https://twitter.com/ckhead) for this example.)
+**Result:** data.table is 75x faster! (Thanks to [Keith Head](https://twitter.com/ckhead) for this example.)
 ]
 
 ---
@@ -887,11 +889,129 @@ DT[, lapply(.SD, mean)]
 
 The last thing I want to mention w.r.t. `by` is it's close relative: `keyby`.
 
-The `keyby` argument works exactly like `by` (you can use it as a drop-in replacement), except that it orders the results and creates a **key** that will allow for various performance improvements.
+The `keyby` argument works exactly like `by` &mdash; you can use it as a drop-in replacement &mdash; except that it orders the results and creates a **key**.
+- Setting a key for a data.table will allow for various (and often astonishing) performance gains<sup>1</sup>
 
-[Keys](https://rdatatable.gitlab.io/data.table/articles/datatable-keys-fast-subset.html) in data.table are *extremely* powerful &mdash; as in, yields 100x additional speed-ups for certain operations &mdash; and are probably deserving of a whole section all on their own. 
+.footnote[<sup>1</sup> Note that you won't see an immediate performance gain with `keyby`, but subsequent operations will certainly benefit. (Of course, you can get an immediate boost by setting the key ahead of time, but I'll explain all that on the next slide...)]
 
-However, I'll simply try to demonstrate some of their power in the next brief section on joins...
+--
+
+Keys are important enough that I want to save them for their own section, though...
+
+---
+name: keys
+class: inverse, center, middle
+
+# Keys
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# What are keys?
+
+Keys are a way of ordering the data that allows for *extremely* fast subsetting.
+
+The data.table [vignette](https://rdatatable.gitlab.io/data.table/articles/datatable-keys-fast-subset.html) describes them as "supercharged rownames". I know that might sound a bit abstract, but here's the idea in a nutshell...
+
+--
+
+Imagine that we want to filter a dataset based on a particular value (e.g. find all the human characters in our starwars dataset).
+- Normally, we'd have to search through the whole dataset to identify matching cases.
+- But, if we've set an appropriate key, then the data are already ordered in such a way that we (i.e. our computer) only has to search through a much smaller subset.
+
+--
+
+**Analogy:** Think of the way a filing cabinet might divide items by alphabetical order: Files starting "ABC" in the top drawer, "DEF" in the second drawer, etc. To find *Alice's* file, you'd only have to search the top draw. For *Fred*, the second draw, and so on.
+
+--
+
+Not only is this much quicker, but the same idea also carries over to *all other* forms of data manipulation that rely on subsetting (aggregation by group, joins, etc.)
+
+--
+
+P.S. We'll get there later in the course, but keys are also the secret sauce in databases.
+
+---
+
+# How do I set a key?
+
+You can set a key when you first create a data.table. E.g.
+- `DT = data.table(x = 1:10, y = LETTERS[1:10], key = "x")`
+- `DT = as.data.table(DF, key = "x")`
+- `setDT(DF, key = "x")`
+
+--
+
+Or, you can set keys on an existing data.table with the `setkey()` function.
+- `setkey(DT, x)`: Note that the key doesn't have to be quoted this time
+
+--
+
+**Important:** Since keys just describe a particular ordering of the data, you can set a key on *multiple* columns. (More [here](https://rdatatable.gitlab.io/data.table/articles/datatable-keys-fast-subset.html#key-properties).) E.g.
+- `DT = as.data.table(DF, key = c("x", "y"))`
+- `setkey(DT, x, y)`: Again, no quotes needed
+
+--
+
+</br>
+P.S. Use the `key()` function to see what keys are currently set for your data.table. You can only ever have one key per table at a time, but it's very easy to change them using one of the above commands.
+---
+
+# Example
+
+Recall the [speed benchmark](#fast) that we saw at the very beginning of the lecture: data.table ended up being 75x faster than dplyr for a fairly standard summarising task.
+
+--
+
+Let's redo the benchmark, but this time include a version where we pre-assign a key. For optimal performance, the key should match the same variables that we're grouping/subsetting on. 
+- Again, a key can be set on multiple variables, although the lead grouping variable (in the below case: "name") is the most important.
+
+--
+
+.small90[
+```{r, eval=FALSE}
+## First create a keyed version of the storms data.table.
+## Note that key variables match the 'by' grouping variables below.
+storms_dt_key = as.data.table(storms, key = c("name", "year", "month", "day"))
+## Collapse function for this keyed data.table. Everything else stays the same.
+collapse_dt_key = function() {
+  storms_dt_key[, .(wind = mean(wind), pressure = mean(pressure), category = first(category)), 
+                by = .(name, year, month, day)]
+}
+## Run the benchmark on all three functions.
+microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
+```
+]
+
+.right[*See next slide for results*]
+---
+
+# Example (cont.)
+
+```{r collapse_comp_key, dependson=collapse_dt, dependson=collapse_dplyr, echo=FALSE}
+storms_dt_key = as.data.table(storms, key = c("name", "year", "month", "day"))
+collapse_dt_key = function() {
+  storms_dt_key[, .(wind = mean(wind), pressure = mean(pressure), category = first(category)),
+            by = .(name, year, month, day)]
+}
+
+microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
+```
+
+--
+
+The keyed data.table version is now **144x** (!!!) faster than dplyr.
+--
+
+- That thing you feel... is your face melting.
+
+--
+
+It's not just this toy example. In working with real-life data, my experience is that setting keys almost always leads to huge speed-ups... and those gains tend to scale as the datasets increase in size.
+
+--
+
+**Bottom line:** data.table is already plenty fast. But use keys if you're really serious about performance.
 
 ---
 name: summary
