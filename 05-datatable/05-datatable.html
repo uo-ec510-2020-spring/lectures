@@ -130,7 +130,7 @@ These two code chunks do the same thing:
 
 ```r
 # library(dplyr) ## Already loaded
-data(starwars, package = "dplyr")
+# data(starwars, package = "dplyr") ## Optional to bring the DF into the global env
 starwars %&gt;% 
   filter(species=="Human") %&gt;% 
   group_by(homeworld) %&gt;% 
@@ -223,7 +223,8 @@ tools::package_dependencies("dplyr", recursive = TRUE)[[1]]
 # Before we continue...
 
 The purpose of this lecture is *not* to convince you that data.table is superior to the tidyverse. (Or vice versa.)
-- For sure, people have strong opinions on the matter and you may find yourself pulling strongly in one direction or the other. And that's okay, but...
+
+For sure, people have strong opinions on the matter and you may find yourself pulling strongly in one direction or the other. And that's okay, but...
 
 My goal is simply to show you another powerful tool that you can use to tackle big data problems efficiently in R.
 
@@ -256,14 +257,38 @@ The same is true for data.table. In fact, data.table functions only work on obje
 
 --
 
-To create a data.table, we have a couple of options:
+To create a data.table, we have a couple of options&lt;sup&gt;1&lt;/sup&gt;:
 - `data.table(x = 1:10)` creates a new data.table from scratch
 - `as.data.table(df)` coerces an existing data frame (here: `df`) to a data.table.
-- `setDT(df)` modifies an existing data frame in place; i.e. we don't have to (re)assign it.
+- `setDT(df)` coerces an existing data frame to a data.table *by reference*; i.e. we don't have to (re)assign it.
+
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt; CSV files imported into R via the amazingly fast `fread()` function are automatically converted to data.table class too. We'll cover `fread()` in the next lecture in data I/O, though.]
+
+---
+
+# What does "modify by reference" mean?
+
+That last bullet leads us to an important concept that underlies much of data.table's awesomeness: It tries, as much as possible, to *modify by reference*.
 
 --
 
-*Note:* CSV files imported into R via the amazingly fast `fread()` function are automatically converted to data.table class too. We'll cover `fread()` in the next lecture, though.
+What does this mean? 
+
+--
+We don't have time to go into details here, but the very (very) short version is that there are basically two ways of changing or assigning objects in R.
+1. **Copy-on-modify:** Creates a copy of your data. Implies extra computational overhead.&lt;sup&gt;*&lt;/sup&gt;
+2. **Modify-in-place:** Avoids creating copies and simply changes the data where it sits in memory. 
+
+--
+
+When we say that data.table "modifies by reference", that essentially means it modifies objects in place. This means lower memory overhead and faster computation time!
+
+.footnote[&lt;sup&gt;*&lt;/sup&gt; In truth, we need to distinguish between &lt;i&gt;shallow&lt;/i&gt; and &lt;i&gt;deep copies&lt;/i&gt;. But that's more than I want you to worry about here.]
+
+--
+
+P.S. Further reading if this stuff interests you: (a) [Reference semantics](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html) data.table vignette, (b) [Names and Values](https://adv-r.hadley.nz/names-values.html) section of *Advanced R* (Hadley Wickham), (c) Nice [blog post](https://tysonbarrett.com//jekyll/update/2019/07/12/datatable/) by Tyson Barrett that may be the most accessible reference of the three for beginners.
 
 ---
 
@@ -517,11 +542,7 @@ starwars_dt[-order(bith_year)] ## (temporarily) sort by oldest to youngest
 
 --
 
-While ordering as per the above is very straightfoward, data.table also provides an optimised `setorder()` function for reordering *by reference*.&lt;sup&gt;1&lt;/sup&gt;
-
-.footnote[
-&lt;sup&gt;1&lt;/sup&gt; Modifying *by reference* means that we modify the data "in place". This idea is actually crucial to the way that data.table works internally, but we'll get back to it in a few slides.
-]
+While ordering as per the above is very straightfoward, data.table also provides an optimised `setorder()` function for reordering *by reference*.
 
 --
 
@@ -588,7 +609,7 @@ For example,
 
 --
 
-Again, note that `:=` is *modifying by reference*, i.e. in place. So we don't have to (re)assign the object to save these changes.
+**Important:** `:=` is *modifying by reference*, i.e. in place. So we don't have to (re)assign the object to save these changes.
 
 --
 
