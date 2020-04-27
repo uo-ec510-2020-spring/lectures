@@ -78,7 +78,7 @@ name: prologue
 # Checklist
 
 We'll be using the following packages in today's lecture:
-- Already installed: **dplyr**, **ggplot2**
+- Already installed: **dplyr**, **ggplot2**, **nycflights13**
 - New: **data.table**, **tidyfast**, **dtplyr**, **microbenchmark**
 
 --
@@ -87,7 +87,7 @@ The following code chunk will install (if necessary) and load everything for you
 
 ```{r libs, cache=FALSE, message=FALSE}
 if (!require(pacman)) install.packages('pacman', repos = 'https://cran.rstudio.com')
-pacman::p_load(dplyr, data.table, dtplyr, tidyfast, microbenchmark, ggplot2)
+pacman::p_load(dplyr, data.table, dtplyr, tidyfast, microbenchmark, ggplot2, nycflights13)
 ```
 
 ---
@@ -167,7 +167,7 @@ collapse_dt = function() {
             by = .(name, year, month, day)]
   }
 
-microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), times = 10)
+microbenchmark(collapse_dplyr(), collapse_dt(), times = 10)
 ```
 ]
 
@@ -1008,7 +1008,7 @@ collapse_dt_key = function() {
                 by = .(name, year, month, day)]
 }
 ## Run the benchmark on all three functions.
-microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
+microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
 ```
 ]
 
@@ -1048,6 +1048,93 @@ class: inverse, center, middle
 
 # Merging datasets
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# Merge (aka join) options
+
+data.table provides two ways to merge datasets.
+- `DT1[DT2, on = "id"]`
+- `merge(DT1, DT2, by = "id")`
+
+--
+
+I prefer the latter because it offers extra functionality (see `?merge.data.table`), but each to their own.<sup>1</sup>
+
+.footnote[<sup>1</sup> For a really good summary of the different join options (left, right, full, anti, etc.) using these two methods, as well as their dplyr equivalents, see [here](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/#joinbind-data-sets).]
+
+--
+
+I'm going to keep things brief by simply showing you how to repeat the same left join that we [practiced](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#55) with dplyr in the last lecture, using data from the **nycflights13** package.
+
+```{r nycflights13}
+# library(nycflights13) ## Already loaded
+flights_dt = as.data.table(flights) 
+planes_dt = as.data.table(planes)
+```
+
+---
+
+# Left join example (cont.)
+
+Here's a comparison with the dplyr equivalents from last week. I'll let you run and compare these yourself (note that the row order will change).
+
+.pull-left[
+**dplyr**
+```{r, eval = FALSE}
+left_join(
+  flights, 
+  planes, 
+  by = "tailnum"
+  )
+```
+]
+
+.pull-right[
+**data.table**
+```{r, eval = FALSE}
+merge(
+  flights_dt, 
+  planes_dt, 
+  all.x = TRUE, ## omit for inner join
+  by = "tailnum")
+```
+]
+
+--
+
+If you run these, you'll see that both methods handle the ambiguous "year" columns by creating "year.x" and "year.y" variants. We avoided this in dplyr by using `rename()`. How might you avoid the same thing in data.table? 
+
+--
+<b>Answer:</b> Use `setnames()`.
+
+```{r, eval = FALSE}
+merge(
+  setnames(flights_dt, old = "year", new = "year_built"), 
+  planes_dt, 
+  all.x = TRUE, 
+  by = "tailnum")
+```
+
+---
+
+# Use keys for lightning fast joins
+
+The only other thing I'll point out is that [keys](#keys) (remember those?) can lead to dramatic speed-ups for merging data.tables. I'll demonstrate using an inner join this time.
+
+```{r merge_key}
+merge_dt = function() merge(flights_dt, planes_dt, by = "tailnum")
+
+flights_dt_key = as.data.table(flights, key = "tailnum")
+planes_dt_key = as.data.table(planes, key = "tailnum")
+merge_dt_key = function() merge(flights_dt_key, planes_dt_key, by = "tailnum")
+
+microbenchmark(merge_dt(), merge_dt_key(), times = 10)
+```
+
+--
+
+Okay, not such a dramatic speed-up in this simple case, but trust me: For really big datasets with complicated joins (e.g. multiple columns), setting keys will make a huge difference. (FWIW, the same is true for dplyr. See [here](https://tysonbarrett.com//jekyll/update/2019/10/11/speed_of_joins/).) 
 
 ---
 name: reshape

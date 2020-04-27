@@ -75,7 +75,7 @@ name: prologue
 # Checklist
 
 We'll be using the following packages in today's lecture:
-- Already installed: **dplyr**, **ggplot2**
+- Already installed: **dplyr**, **ggplot2**, **nycflights13**
 - New: **data.table**, **tidyfast**, **dtplyr**, **microbenchmark**
 
 --
@@ -85,7 +85,7 @@ The following code chunk will install (if necessary) and load everything for you
 
 ```r
 if (!require(pacman)) install.packages('pacman', repos = 'https://cran.rstudio.com')
-pacman::p_load(dplyr, data.table, dtplyr, tidyfast, microbenchmark, ggplot2)
+pacman::p_load(dplyr, data.table, dtplyr, tidyfast, microbenchmark, ggplot2, nycflights13)
 ```
 
 ---
@@ -166,17 +166,17 @@ collapse_dt = function() {
             by = .(name, year, month, day)]
   }
 
-microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), times = 10)
+microbenchmark(collapse_dplyr(), collapse_dt(), times = 10)
 ```
 
 ```
 ## Unit: milliseconds
-##              expr        min         lq       mean     median         uq
-##  collapse_dplyr() 112.556723 115.061508 123.886442 125.132973 127.261935
-##     collapse_dt()   1.474865   1.552189   2.430578   1.631909   1.978115
-##         max neval cld
-##  145.066357    10   b
-##    6.608645    10  a
+##              expr       min         lq       mean    median         uq
+##  collapse_dplyr() 121.53350 125.013755 129.728054 128.35446 133.674008
+##     collapse_dt()   1.52316   1.635442   3.380381   1.68409   1.744216
+##        max neval cld
+##  141.07935    10   b
+##   15.02886    10  a
 ```
 ]
 
@@ -1187,7 +1187,7 @@ collapse_dt_key = function() {
                 by = .(name, year, month, day)]
 }
 ## Run the benchmark on all three functions.
-microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
+microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
 ```
 ]
 
@@ -1200,13 +1200,13 @@ microbenchmark::microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(
 ```
 ## Unit: microseconds
 ##               expr        min         lq       mean     median         uq
-##   collapse_dplyr() 109268.990 116735.833 120839.289 118999.432 127424.233
-##      collapse_dt()   1458.897   1489.214   1859.032   1519.345   1593.289
-##  collapse_dt_key()    772.364    795.565   1087.260    828.006    891.412
+##   collapse_dplyr() 114507.903 118471.268 126757.730 121386.061 129442.557
+##      collapse_dt()   1510.639   1605.432   2050.183   1719.483   1906.047
+##  collapse_dt_key()    846.293    881.082   1252.658   1047.224   1079.106
 ##         max neval cld
-##  131681.249    10   b
-##    4724.319    10  a 
-##    3351.301    10  a
+##  168398.229    10   b
+##    5050.027    10  a 
+##    3324.596    10  a
 ```
 
 --
@@ -1230,6 +1230,108 @@ class: inverse, center, middle
 
 # Merging datasets
 &lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+
+# Merge (aka join) options
+
+data.table provides two ways to merge datasets.
+- `DT1[DT2, on = "id"]`
+- `merge(DT1, DT2, by = "id")`
+
+--
+
+I prefer the latter because it offers extra functionality (see `?merge.data.table`), but each to their own.&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[&lt;sup&gt;1&lt;/sup&gt; For a really good summary of the different join options (left, right, full, anti, etc.) using these two methods, as well as their dplyr equivalents, see [here](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/#joinbind-data-sets).]
+
+--
+
+I'm going to keep things brief by simply showing you how to repeat the same left join that we [practiced](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#55) with dplyr in the last lecture, using data from the **nycflights13** package.
+
+
+```r
+# library(nycflights13) ## Already loaded
+flights_dt = as.data.table(flights) 
+planes_dt = as.data.table(planes)
+```
+
+---
+
+# Left join example (cont.)
+
+Here's a comparison with the dplyr equivalents from last week. I'll let you run and compare these yourself (note that the row order will change).
+
+.pull-left[
+**dplyr**
+
+```r
+left_join(
+  flights, 
+  planes, 
+  by = "tailnum"
+  )
+```
+]
+
+.pull-right[
+**data.table**
+
+```r
+merge(
+  flights_dt, 
+  planes_dt, 
+  all.x = TRUE, ## omit for inner join
+  by = "tailnum")
+```
+]
+
+--
+
+If you run these, you'll see that both methods handle the ambiguous "year" columns by creating "year.x" and "year.y" variants. We avoided this in dplyr by using `rename()`. How might you avoid the same thing in data.table? 
+
+--
+&lt;b&gt;Answer:&lt;/b&gt; Use `setnames()`.
+
+
+```r
+merge(
+  setnames(flights_dt, old = "year", new = "year_built"), 
+  planes_dt, 
+  all.x = TRUE, 
+  by = "tailnum")
+```
+
+---
+
+# Use keys for lightning fast joins
+
+The only other thing I'll point out is that [keys](#keys) (remember those?) can lead to dramatic speed-ups for merging data.tables. I'll demonstrate using an inner join this time.
+
+
+```r
+merge_dt = function() merge(flights_dt, planes_dt, by = "tailnum")
+
+flights_dt_key = as.data.table(flights, key = "tailnum")
+planes_dt_key = as.data.table(planes, key = "tailnum")
+merge_dt_key = function() merge(flights_dt_key, planes_dt_key, by = "tailnum")
+
+microbenchmark(merge_dt(), merge_dt_key(), times = 10)
+```
+
+```
+## Unit: milliseconds
+##            expr      min       lq     mean   median        uq       max neval
+##      merge_dt() 41.21015 45.57901 99.65385 48.08860 151.66506 363.86659    10
+##  merge_dt_key() 27.80020 28.33882 31.09487 29.46449  35.01835  37.23726    10
+##  cld
+##    a
+##    a
+```
+
+--
+
+Okay, not such a dramatic speed-up in this simple case, but trust me: For really big datasets with complicated joins (e.g. multiple columns), setting keys will make a huge difference. (FWIW, the same is true for dplyr. See [here](https://tysonbarrett.com//jekyll/update/2019/10/11/speed_of_joins/).) 
 
 ---
 name: reshape
