@@ -1561,14 +1561,13 @@ storms_dt[, .(wind = mean(wind),
 # Don't be a fanatic
 
 Closely related to the second first point: Don't try to shoehorn every problem into a tidyverse or data.table framework.&lt;sup&gt;1&lt;/sup&gt;
+- Recall my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem." You can add data.table to that list.
+
+--
 
 Having worked extensively with both packages, I think it fair to say that there are things the tidyverse (dplyr+tidyr) does better, and there are things that data.table does better.
 - If you find a great solution on StackOverflow that uses the "other" package... use it!
 - Don't be a fanatic. Insisting on ecosystem purity is rarely worth it. 
-
-.footnote[
-&lt;sup&gt;1&lt;/sup&gt; Remember my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem." Add data.table to that list.
-]
 
 --
 
@@ -1581,7 +1580,7 @@ starwars_dt %&gt;% group_by(homeworld) %&gt;% summarise(height = mean(height, na
 
 --
 
-(This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. But luckily there's an ever better solution...)
+(This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. Luckily there's an ever better solution on the next slide...)
 
 ---
 
