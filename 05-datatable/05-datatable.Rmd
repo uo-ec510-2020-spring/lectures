@@ -1386,9 +1386,38 @@ class: inverse, center, middle
 ---
 # Summary
 
+data.table is a powerful data wrangling package that combines concise syntax with incredible performance. It is also very lightweight, despite being feature rich.
+
+The basic syntax is `DT[i, j, by]`
+- `i` On which rows?
+- `j` What to do?
+- `by` Grouped by what?
+
+data.table also (re)introduces some new ideas like modify by reference (e.g. `:=`), as well as syntax (e.g. `.()`, `.SDcols`).
+- All of these ideas support data.table's core goals: Maximise performance and flexibility, whilst maintaining a concise and consistent syntax.
+
+Pro tip: Use keys to order your data and yield dramatic speed-ups.
+
+The tidyverse and data.table are often viewed as substitutes, but you can profitably combine both into your workflow... even if you strongly prefer one for (most of) your data wrangling needs.
+
+---
+
+# Further resources
+
+As hard as it may be to believe, there's a ton of data.table features that we didn't cover today. Some, we'll get to in later lectures (e.g. the insanely fast `fread()` and `fwrite()` CSV I/O functions). Others, we won't, but hopefully I've given you enough of a grounding to continue exploring on your own.
+
+Here are some recommended further resources:
+- http://r-datatable.com (Official website. See the vignettes, especially.)
+- https://github.com/Rdatatable/data.table#cheatsheets (Cheatsheet.)
+- https://atrebas.github.io/post/2019-03-03-datatable-dplyr (Really nice, side-by-side comparisons of common data.table and dplyr operations.)
+
+And related packages:
+- https://tysonbarrett.com/tidyfast
+- https://dtplyr.tidyverse.org
+
 --
 
-You next assignment is going up shortly.
+P.S. Your next assignment is up: Impress me with your data wrangling skills using either the tidyverse or data.table (or both!)
 
 ---
 class: inverse, center, middle
