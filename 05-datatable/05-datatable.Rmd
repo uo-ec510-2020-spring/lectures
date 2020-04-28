@@ -269,15 +269,15 @@ We don't have time to go into details here, but the very (very) short version is
 1. **Copy-on-modify:** Creates a copy of your data. Implies extra computational overhead.<sup>*</sup>
 2. **Modify-in-place:** Avoids creating copies and simply changes the data where it sits in memory. 
 
---
-
-When we say that data.table "modifies by reference", that essentially means it modifies objects in place. This means lower memory overhead and faster computation time!
-
 .footnote[<sup>*</sup> In truth, we need to distinguish between <i>shallow</i> and <i>deep copies</i>. But that's more than I want you to worry about here.]
 
 --
 
-P.S. Further reading if this stuff interests you: (a) [Reference semantics](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html) data.table vignette, (b) [Names and Values](https://adv-r.hadley.nz/names-values.html) section of *Advanced R* (Hadley Wickham), (c) Nice [blog post](https://tysonbarrett.com//jekyll/update/2019/07/12/datatable/) by Tyson Barrett that may be the most accessible reference of the three for beginners.
+When we say that data.table "modifies by reference", that essentially means it modifies objects in place. This translates to lower memory overhead and faster computation time!
+
+--
+
+P.S. Further reading if this stuff interests you: (a) [Reference semantics](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html) data.table vignette, (b) [Names and Values](https://adv-r.hadley.nz/names-values.html) section of *Advanced R* (Hadley Wickham), (c) Nice [blog post](https://tysonbarrett.com//jekyll/update/2019/07/12/datatable/) by Tyson Barrett that's accessible to beginners.
 
 ---
 
@@ -581,7 +581,7 @@ DT[, x_sq := x^2][] ## Adding [] prints the result.
 
 ### Sub-assign by reference
 
-One really cool implication of `:=` is data.table's [sub-assign by reference](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html#ref-i-j) functionality. As a really simple example, consider a new fake dataset.
+One really cool implication of `:=` is data.table's [sub-assign by reference](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html#ref-i-j) functionality. As a simple example, consider another fake dataset.
 
 ```{r subassign1, cache=FALSE}
 DT2 = data.table(a = -2:2, b = LETTERS[1:5])
@@ -694,7 +694,7 @@ starwars_dt[, .(name, height, mass, homeworld)] %>% head(2)
 
 # Aside: What's with the .()?
 
-We've now seen `.()` in a couple places, e.g the previous slide (and [this slide](#intro) from earlier if you were paying close attention).
+We've now seen `.()` in a couple places, e.g the previous slide and [this slide](#intro) from earlier if you were paying close attention.
 - `.()` is just a data.table shortcut for `list()`. 
 
 We'll be using `.()` quite liberally once we start working subsetting and/or grouping by multiple variables at a time.
@@ -778,8 +778,7 @@ starwars_dt[, .N]
 
 --
 
-Of course, this is a pretty silly example since it's just going to give us the total number of rows in the dataset.
-- Like most forms of aggregation, `.N` is much more interesting when it is applied by group.
+Of course, this is a pretty silly example since it's just going to give us the total number of rows in the dataset. Like most forms of aggregation, `.N` is much more interesting when it is applied by group.
 - This provides a nice segue to our next section...
 
 ---
@@ -858,13 +857,11 @@ starwars_dt[,
   head(2) ## Just keep everything on the slide
 ```
 
-- First we say what we want to *do* on `.SD` (i.e. our data subset). In this case, we want to get the mean for each element.<sup>1</sup>
+First, we specify what we want to *do* on our data subset (i.e. `.SD`). In this case, we want the mean for each element, which we obtain by iterating over with the base `lapply()` function.<sup>1</sup>
 
-.footnote[.small90[
-<sup>1</sup> In practical terms, we do this by iterating over each element with the base `lapply()` function. We'll learn more about iteration once we get to the programming section of the course.
-
-<span style='color: #FAFAFA;'><sup>2</sup> One annoyance I have is that the .() syntax doesn't work for .SDcols. However, note that you can at least feed it consecutive columns without quotes, e.g. .SDcols = height:mass. See here.</span>
-]]
+.footnote[
+<sup>1</sup> We'll learn more about iteration once we get to the programming section of the course.
+]
 
 ---
 count: false
@@ -879,14 +876,36 @@ starwars_dt[,
   head(2) ## Just keep everything on the slide
 ```
 
-- First we say what we want to *do* on `.SD` (i.e. our data subset). In this case, we want to get the mean for each element.<sup>1</sup>
-- Next, we specify *which columns* to subset with the `.SDcols` argument.<sup>2</sup>
+First, we specify what we want to *do* on our data subset (i.e. `.SD`). In this case, we want the mean for each element, which we obtain by iterating over with the base `lapply()` function.<sup>1</sup>
 
-.footnote[.small90[
-<sup>1</sup> In practical terms, we do this by iterating over each element with the base `lapply()` function. We'll learn more about iteration once we get to the programming section of the course.
+Then, we specify *which columns* to subset with the `.SDcols` argument.
 
-<sup>2</sup> One annoyance I have is that the `.()` syntax doesn't work for .SDcols. However, note that you can at least feed it consecutive columns without quotes, e.g. `.SDcols = height:mass`. See [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html#how-can-we-specify-just-the-columns-we-would-like-to-compute-the-mean-on).
-]]
+.footnote[
+<sup>1</sup> We'll learn more about iteration once we get to the programming section of the course.
+]
+
+---
+count: false
+
+# Efficient subsetting with .SD (cont.)
+
+```{r sd_cols4}
+starwars_dt[, 
+            lapply(.SD, mean, na.rm=T), 
+            by = species, 
+            .SDcols = c("height", "mass", "birth_year")] %>%
+  head(2) ## Just keep everything on the slide
+```
+
+First, we specify what we want to *do* on our data subset (i.e. `.SD`). In this case, we want the mean for each element, which we obtain by iterating over with the base `lapply()` function.<sup>1</sup>
+
+Then, we specify *which columns* to subset with the `.SDcols` argument.
+
+P.S. One annoyance I have is that the `.()` syntax doesn't work for `.SDcols`. However, we can at least feed it consecutive columns without quotes, e.g. `.SDcols = height:mass`. See [here](https://rdatatable.gitlab.io/data.table/articles/datatable-intro.html#how-can-we-specify-just-the-columns-we-would-like-to-compute-the-mean-on).
+
+.footnote[
+<sup>1</sup> We'll learn more about iteration once we get to the programming section of the course.
+]
 
 ---
 
@@ -916,7 +935,7 @@ DT[, lapply(.SD, mean)]
 
 # keyby
 
-The last thing I want to mention w.r.t. `by` is it's close relative: `keyby`.
+The last thing I want to mention w.r.t. `by` is its close relative: `keyby`.
 
 The `keyby` argument works exactly like `by` &mdash; you can use it as a drop-in replacement &mdash; except that it orders the results and creates a **key**.
 - Setting a key for a data.table will allow for various (and often astonishing) performance gains<sup>1</sup>
@@ -1077,7 +1096,7 @@ planes_dt = as.data.table(planes)
 
 # Left join example (cont.)
 
-Here's a comparison with the dplyr equivalents from last week. I'll let you run and compare these yourself (note that the row order will change).
+Here's a comparison with the dplyr equivalents from last week. I'll let you run and compare these yourself. (Note that the row orders will be different.)
 
 .pull-left[
 **dplyr**
@@ -1106,11 +1125,11 @@ merge(
 If you run these, you'll see that both methods handle the ambiguous "year" columns by creating "year.x" and "year.y" variants. We avoided this in dplyr by using `rename()`. How might you avoid the same thing in data.table? 
 
 --
-<b>Answer:</b> Use `setnames()`.
+<b>Possible answer:</b> Use `setnames()`.
 
 ```{r, eval = FALSE}
 merge(
-  setnames(flights_dt, old = "year", new = "year_built"), 
+  setnames(flights_dt, old = "year", new = "year_built"), #<<
   planes_dt, 
   all.x = TRUE, 
   by = "tailnum")
@@ -1134,7 +1153,7 @@ microbenchmark(merge_dt(), merge_dt_key(), times = 10)
 
 --
 
-Okay, not such a dramatic speed-up in this simple case, but trust me: For really big datasets with complicated joins (e.g. multiple columns), setting keys will make a huge difference. (FWIW, the same is true for dplyr. See [here](https://tysonbarrett.com//jekyll/update/2019/10/11/speed_of_joins/).) 
+Okay, not *such* a dramatic speed-up in this simple case, but trust me: For really big datasets with complicated joins (e.g. multiple columns), setting keys will make a huge difference. (FWIW, the same is true for dplyr. See [here](https://tysonbarrett.com//jekyll/update/2019/10/11/speed_of_joins/).) 
 
 ---
 name: reshape
@@ -1199,7 +1218,7 @@ stocks %>%
 
 # Reshape from long to wide
 
-Quickly save the long-format stocks data.table. I'll use the `melt()` approach and also throw in some extra column-naming options, just so you can see those in action.
+Let's quickly save the long-format stocks data.table. I'll use the `melt()` approach and also throw in some extra column-naming options, just so you can see those in action.
 
 ```{r stocks_long}
 stocks_long = melt(stocks, id.vars ="time", 
@@ -1295,22 +1314,19 @@ Having worked extensively with both packages, I think it fair to say that there 
 
 .footnote[
 <sup>1</sup> Remember my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem." Add data.table to that list.
-
-<span style='color: #FAFAFA;'><sup>2</sup>This does incur a performance penalty. But luckily there's a better solution on the next slide...</span>
 ]
 
 --
 
-</br>
-Plus, as I hinted earlier, you *can* use tidyverse verbs on data.tables.<sup>2</sup> Try this yourself:
+Plus, as I hinted earlier, you *can* use tidyverse verbs on data.tables. Try yourself:
 
 ```{r, eval=FALSE}
 starwars_dt %>% group_by(homeworld) %>% summarise(height = mean(height, na.rm=T))
 ```
 
-.footnote[
-<sup>2</sup>This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. But luckily there's a better solution on the next slide...
-]
+--
+
+This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. But luckily there's an ever better solution...
 
 ---
 
@@ -1327,7 +1343,7 @@ Hadley Wickham's **dtplyr** package provides a data.table "back-end" for dplyr.
 
 --
 
-If this sounds appealing to you (and it should!) I strongly encourage you to check out the [package website](https://dtplyr.tidyverse.org/) for details. But here's quick example, using our benchmark from earlier.
+If this sounds appealing to you (and it should) I strongly encourage you to check out the [package website](https://dtplyr.tidyverse.org/) for details. But here's quick example, using our benchmark from earlier.
 
 .font80[
 ```{r, eval=FALSE}
@@ -1398,7 +1414,7 @@ data.table also (re)introduces some new ideas like modify by reference (e.g. `:=
 
 Pro tip: Use keys to order your data and yield dramatic speed-ups.
 
-The tidyverse and data.table are often viewed as substitutes, but you can profitably combine both into your workflow... even if you strongly prefer one for (most of) your data wrangling needs.
+The tidyverse and data.table are often viewed as substitutes, but you can profitably combine both into your workflow... even if you favour one for (most of) your data wrangling needs.
 
 ---
 
