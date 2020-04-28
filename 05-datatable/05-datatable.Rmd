@@ -1309,7 +1309,7 @@ collapse_dt_key() %>%
 Closely related to the second first point: Don't try to shoehorn every problem into a tidyverse or data.table framework.<sup>1</sup>
 
 Having worked extensively with both packages, I think it fair to say that there are things the tidyverse (dplyr+tidyr) does better, and there are things that data.table does better.
-- If you find a great solution on Stackerflow that uses the "other" package... use it!
+- If you find a great solution on StackOverflow that uses the "other" package... use it!
 - Don't be a fanatic. Insisting on ecosystem purity is rarely worth it. 
 
 .footnote[
@@ -1326,7 +1326,7 @@ starwars_dt %>% group_by(homeworld) %>% summarise(height = mean(height, na.rm=T)
 
 --
 
-This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. But luckily there's an ever better solution...
+(This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. But luckily there's an ever better solution...)
 
 ---
 
