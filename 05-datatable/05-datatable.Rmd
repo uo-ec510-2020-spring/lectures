@@ -1425,6 +1425,6 @@ class: inverse, center, middle
 # Next lecture: Big data I/O
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
-```{r gen_pdf, include = FALSE, cache = FALSE, eval = FALSE}
+```{r gen_pdf, include = FALSE, cache = FALSE, eval = TRUE}
 pagedown::chrome_print("05-datatable.html", output = "05-datatable.pdf")
 ```
