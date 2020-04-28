@@ -1120,7 +1120,7 @@ merge(
 
 # Use keys for lightning fast joins
 
-The only other thing I'll point out is that [keys](#keys) (remember those?) can lead to dramatic speed-ups for merging data.tables. I'll demonstrate using an inner join this time.
+The only other thing I'll point out is that setting [keys](#keys) can lead to dramatic speed-ups for merging data.tables. I'll demonstrate using an inner join this time.
 
 ```{r merge_key}
 merge_dt = function() merge(flights_dt, planes_dt, by = "tailnum")
@@ -1142,6 +1142,88 @@ class: inverse, center, middle
 
 # Reshaping data
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# Reshaping options with data.table
+
+In the tidyverse lecture, we saw how to reshape data using the tidyr::pivot* functions.
+
+data.table offers its own functions for flexibly reshaping data:
+- `dcast()`: convert wide data to long data
+- `melt()`: convert long data to wide data
+
+--
+
+However, I also want to flag the [**tidyfast**](https://tysonbarrett.com/tidyfast/index.html) package by Tyson Barrett, which implements data.table versions of the tidyr::pivot* functions (among other things).
+- `tidyfast::dt_pivot_longer()`: wide to long
+- `tidyfast::dt_pivot_wider()`: long to wide
+
+--
+
+I'll demonstrate reshaping with both options on the same fake "stocks" data that we created last time: 
+
+```{r stocks}
+stocks = data.table(time = as.Date('2009-01-01') + 0:1,
+                    X = rnorm(2, 0, 1),
+                    Y = rnorm(2, 0, 2),
+                    Z = rnorm(2, 0, 4))
+```
+
+---
+
+# Reshape from wide to long
+
+Our data are currently in wide format.
+```{r stocks_print, dependson=stocks}
+stocks
+```
+
+To convert this into long format, we could do either of the following:
+
+.pull-left[.small90[
+```{r melt}
+# See ?melt.data.table for options
+melt(stocks, id.vars ="time")
+```
+]]
+
+.pull-right[.small90[
+```{r dt_pivot_longer}
+stocks %>% 
+  dt_pivot_longer(X:Z, names_to="stock", values_to="price")
+```
+]]
+
+---
+
+# Reshape from long to wide
+
+Quickly save the long-format stocks data.table. I'll use the `melt()` approach and also throw in some extra column-naming options, just so you can see those in action.
+
+```{r stocks_long}
+stocks_long = melt(stocks, id.vars ="time", 
+                   variable.name = "stock", value.name = "price")
+stocks_long
+```
+
+--
+
+.pull-left[.small90[
+```{r dcast}
+dcast(stocks_long, 
+      time ~ stock, 
+      value.var = "price")
+```
+]]
+
+.pull-right[.small90[
+```{r dt_pivot_wider}
+stocks_long %>% 
+  dt_pivot_wider(names_from=stock, 
+                 values_from=price)
+```
+]]
 
 ---
 name: tidyverse
@@ -1211,19 +1293,24 @@ Having worked extensively with both packages, I think it fair to say that there 
 - If you find a great solution on Stackerflow that uses the "other" package... use it!
 - Don't be a fanatic. Insisting on ecosystem purity is rarely worth it. 
 
-.footnote[<sup>1</sup> Remember my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem." Add data.table to that list.]
+.footnote[
+<sup>1</sup> Remember my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem." Add data.table to that list.
+
+<span style='color: #FAFAFA;'><sup>2</sup>This does incur a performance penalty. But luckily there's a better solution on the next slide...</span>
+]
 
 --
 
-Plus, as I hinted earlier, you *can* use tidyverse verbs on data.tables. Try this yourself:
+</br>
+Plus, as I hinted earlier, you *can* use tidyverse verbs on data.tables.<sup>2</sup> Try this yourself:
 
 ```{r, eval=FALSE}
 starwars_dt %>% group_by(homeworld) %>% summarise(height = mean(height, na.rm=T))
 ```
 
---
-
-*Note:* Using dplyr verbs on data.tables will [cause](https://stackoverflow.com/a/27513921) a performance drop... but, luckily there's a better solution on the next slide. 
+.footnote[
+<sup>2</sup>This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. But luckily there's a better solution on the next slide...
+]
 
 ---
 

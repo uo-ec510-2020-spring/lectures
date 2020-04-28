@@ -1306,7 +1306,7 @@ merge(
 
 # Use keys for lightning fast joins
 
-The only other thing I'll point out is that [keys](#keys) (remember those?) can lead to dramatic speed-ups for merging data.tables. I'll demonstrate using an inner join this time.
+The only other thing I'll point out is that setting [keys](#keys) can lead to dramatic speed-ups for merging data.tables. I'll demonstrate using an inner join this time.
 
 
 ```r
@@ -1339,6 +1339,143 @@ class: inverse, center, middle
 
 # Reshaping data
 &lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+
+# Reshaping options with data.table
+
+In the tidyverse lecture, we saw how to reshape data using the tidyr::pivot* functions.
+
+data.table offers its own functions for flexibly reshaping data:
+- `dcast()`: convert wide data to long data
+- `melt()`: convert long data to wide data
+
+--
+
+However, I also want to flag the [**tidyfast**](https://tysonbarrett.com/tidyfast/index.html) package by Tyson Barrett, which implements data.table versions of the tidyr::pivot* functions (among other things).
+- `tidyfast::dt_pivot_longer()`: wide to long
+- `tidyfast::dt_pivot_wider()`: long to wide
+
+--
+
+I'll demonstrate reshaping with both options on the same fake "stocks" data that we created last time: 
+
+
+```r
+stocks = data.table(time = as.Date('2009-01-01') + 0:1,
+                    X = rnorm(2, 0, 1),
+                    Y = rnorm(2, 0, 2),
+                    Z = rnorm(2, 0, 4))
+```
+
+---
+
+# Reshape from wide to long
+
+Our data are currently in wide format.
+
+```r
+stocks
+```
+
+```
+##          time          X         Y         Z
+## 1: 2009-01-01  0.3522752  4.068978 7.3494008
+## 2: 2009-01-02 -0.3102111 -1.763021 0.7670371
+```
+
+To convert this into long format, we could do either of the following:
+
+.pull-left[.small90[
+
+```r
+# See ?melt.data.table for options
+melt(stocks, id.vars ="time")
+```
+
+```
+##          time variable      value
+## 1: 2009-01-01        X  0.3522752
+## 2: 2009-01-02        X -0.3102111
+## 3: 2009-01-01        Y  4.0689778
+## 4: 2009-01-02        Y -1.7630212
+## 5: 2009-01-01        Z  7.3494008
+## 6: 2009-01-02        Z  0.7670371
+```
+]]
+
+.pull-right[.small90[
+
+```r
+stocks %&gt;% 
+  dt_pivot_longer(X:Z, names_to="stock", values_to="price")
+```
+
+```
+##          time stock      price
+## 1: 2009-01-01     X  0.3522752
+## 2: 2009-01-02     X -0.3102111
+## 3: 2009-01-01     Y  4.0689778
+## 4: 2009-01-02     Y -1.7630212
+## 5: 2009-01-01     Z  7.3494008
+## 6: 2009-01-02     Z  0.7670371
+```
+]]
+
+---
+
+# Reshape from long to wide
+
+Quickly save the long-format stocks data.table. I'll use the `melt()` approach and also throw in some extra column-naming options, just so you can see those in action.
+
+
+```r
+stocks_long = melt(stocks, id.vars ="time", 
+                   variable.name = "stock", value.name = "price")
+stocks_long
+```
+
+```
+##          time stock      price
+## 1: 2009-01-01     X  0.3522752
+## 2: 2009-01-02     X -0.3102111
+## 3: 2009-01-01     Y  4.0689778
+## 4: 2009-01-02     Y -1.7630212
+## 5: 2009-01-01     Z  7.3494008
+## 6: 2009-01-02     Z  0.7670371
+```
+
+--
+
+.pull-left[.small90[
+
+```r
+dcast(stocks_long, 
+      time ~ stock, 
+      value.var = "price")
+```
+
+```
+##          time          X         Y         Z
+## 1: 2009-01-01  0.3522752  4.068978 7.3494008
+## 2: 2009-01-02 -0.3102111 -1.763021 0.7670371
+```
+]]
+
+.pull-right[.small90[
+
+```r
+stocks_long %&gt;% 
+  dt_pivot_wider(names_from=stock, 
+                 values_from=price)
+```
+
+```
+##          time          X         Y         Z
+## 1: 2009-01-01  0.3522752  4.068978 7.3494008
+## 2: 2009-01-02 -0.3102111 -1.763021 0.7670371
+```
+]]
 
 ---
 name: tidyverse
@@ -1403,20 +1540,25 @@ Having worked extensively with both packages, I think it fair to say that there 
 - If you find a great solution on Stackerflow that uses the "other" package... use it!
 - Don't be a fanatic. Insisting on ecosystem purity is rarely worth it. 
 
-.footnote[&lt;sup&gt;1&lt;/sup&gt; Remember my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem." Add data.table to that list.]
+.footnote[
+&lt;sup&gt;1&lt;/sup&gt; Remember my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem." Add data.table to that list.
+
+&lt;span style='color: #FAFAFA;'&gt;&lt;sup&gt;2&lt;/sup&gt;This does incur a performance penalty. But luckily there's a better solution on the next slide...&lt;/span&gt;
+]
 
 --
 
-Plus, as I hinted earlier, you *can* use tidyverse verbs on data.tables. Try this yourself:
+&lt;/br&gt;
+Plus, as I hinted earlier, you *can* use tidyverse verbs on data.tables.&lt;sup&gt;2&lt;/sup&gt; Try this yourself:
 
 
 ```r
 starwars_dt %&gt;% group_by(homeworld) %&gt;% summarise(height = mean(height, na.rm=T))
 ```
 
---
-
-*Note:* Using dplyr verbs on data.tables will [cause](https://stackoverflow.com/a/27513921) a performance drop... but, luckily there's a better solution on the next slide. 
+.footnote[
+&lt;sup&gt;2&lt;/sup&gt;This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. But luckily there's a better solution on the next slide...
+]
 
 ---
 
