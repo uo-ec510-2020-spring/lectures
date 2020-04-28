@@ -215,12 +215,12 @@ The purpose of this lecture is *not* to convince you that data.table is superior
 
 For sure, people have strong opinions on the matter and you may find yourself pulling strongly in one direction or the other. And that's okay, but...
 
-My goal is simply to show you another powerful tool that you can use to tackle big data problems efficiently in R.
+My goal is simply to show you another powerful tool that you can use to tackle big (or small!) data problems efficiently in R.
 
 --
 
 FWIW, I'm a huge fan of both the tidyverse and data.table, and use them about equally in my own work.
-- Knowing how to use both of them and how they complement each other has (I believe) made me a much more effective R user/empirical economist/data scientist/etc.
+- Knowing how to use both of them and how they complement each other has, I believe, made me a much more effective R user/empirical economist/data scientist/etc.
 
 --
 
