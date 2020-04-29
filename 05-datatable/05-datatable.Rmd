@@ -363,7 +363,7 @@ starwars %>%
 starwars_dt = as.data.table(starwars)
 starwars_dt[
   species=="Human", ## i #<<
-  mean(height, na.rm=T), 
+  .(V1 = mean(height, na.rm=T)), 
   by = gender]
 ```
 ]
@@ -395,7 +395,7 @@ starwars %>%
 starwars_dt = as.data.table(starwars)
 starwars_dt[
   species=="Human",
-  mean(height, na.rm=T),  ## j #<<
+  .(V1 = mean(height, na.rm=T)),  ## j #<<
   by = gender]
 ```
 ]
@@ -427,7 +427,7 @@ starwars %>%
 starwars_dt = as.data.table(starwars)
 starwars_dt[
   species=="Human",
-  mean(height, na.rm=T),  
+  .(V1 = mean(height, na.rm=T)),  
   by = gender] ## by #<<
 ```
 ]
@@ -459,7 +459,7 @@ starwars %>%
 starwars_dt = as.data.table(starwars)
 starwars_dt[
   species=="Human", 
-  mean(height, na.rm=T), 
+  .(V1 = mean(height, na.rm=T)), 
   by = gender]
 ```
 ]
