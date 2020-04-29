@@ -501,8 +501,8 @@ Note that we don't actually need commas when we're only subsetting on `i` (i.e. 
 # Order by rows (arrange)
 
 ```r
-starwars_dt[order(birth_year)] ## (temporarily) sort by youngest to oldest
-starwars_dt[-order(bith_year)] ## (temporarily) sort by oldest to youngest
+starwars_dt[order(birth_year)]  ## (temporarily) sort by youngest to oldest
+starwars_dt[order(-birth_year)] ## (temporarily) sort by oldest to youngest
 ```
 
 --
@@ -727,9 +727,9 @@ starwars_dt[, !c("name", "height")]
 And, you can rename a column as follows (again, run this yourself):
 
 ```{r, eval=FALSE}
-setnames[starwars_dt, old = "name", new = "alias"][]
+setnames(starwars_dt, old = "name", new = "alias")[]
 ## Safer to change it back, just in case we use "name" on a later slide again
-setnames[starwars_dt, old = "alias", new = "name"]
+setnames(starwars_dt, old = "alias", new = "name")
 ```
 
 --
