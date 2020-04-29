@@ -332,7 +332,7 @@ data(starwars, package = "dplyr")
 starwars %&gt;%
   filter(species=="Human") %&gt;%
   group_by(gender) %&gt;%
-  summarise(V1 = mean(height, na.rm=T))
+  summarise(mean(height, na.rm=T))
 ```
 
 ]
@@ -366,7 +366,7 @@ data(starwars, package = "dplyr")
 starwars %&gt;%
 * filter(species=="Human") %&gt;%
   group_by(gender) %&gt;%
-  summarise(V1 = mean(height, na.rm=T))
+  summarise(mean(height, na.rm=T))
 ```
 
 ]
@@ -400,7 +400,7 @@ data(starwars, package = "dplyr")
 starwars %&gt;%
   filter(species=="Human") %&gt;% 
   group_by(gender) %&gt;%
-* summarise(V1 = mean(height, na.rm=T))
+* summarise(mean(height, na.rm=T))
 ```
 
 ]
@@ -434,7 +434,7 @@ data(starwars, package = "dplyr")
 starwars %&gt;%
   filter(species=="Human") %&gt;% 
 * group_by(gender) %&gt;%
-  summarise(V1 = mean(height, na.rm=T)) 
+  summarise(mean(height, na.rm=T)) 
 ```
 
 ]
@@ -468,15 +468,15 @@ data(starwars, package = "dplyr")
 starwars %&gt;%
   filter(species=="Human") %&gt;%
   group_by(gender) %&gt;%
-  summarise(V1 = mean(height, na.rm=T))
+  summarise(mean(height, na.rm=T))
 ```
 
 ```
 ## # A tibble: 2 x 2
-##   gender       V1
-## * &lt;chr&gt;     &lt;dbl&gt;
-## 1 feminine   160.
-## 2 masculine  182.
+##   gender    `mean(height, na.rm = T)`
+## * &lt;chr&gt;                         &lt;dbl&gt;
+## 1 feminine                       160.
+## 2 masculine                      182.
 ```
 
 ]
@@ -805,7 +805,7 @@ starwars_dt[, .(name, height, mass, homeworld)] %&gt;% head(2)
 
 # Aside: What's with the .()?
 
-We've now seen `.()` in a couple places, e.g the previous slide and [this slide](#intro) from earlier if you were paying close attention.
+We've now seen `.()` in a couple places, e.g the previous slide and [this slide](#fast) from earlier if you were paying close attention.
 - `.()` is just a data.table shortcut for `list()`. 
 
 We'll be using `.()` quite liberally once we start working subsetting and/or grouping by multiple variables at a time.
@@ -1715,7 +1715,7 @@ class: inverse, center, middle
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
 "highlightLines": true,
-"highlightSpans": true,
+"highlightSpans": false,
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {

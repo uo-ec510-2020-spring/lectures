@@ -12,7 +12,7 @@ output:
       beforeInit: "libs/cols_macro.js"
       highlightStyle: github
       highlightLines: true
-      highlightSpans: true
+      highlightSpans: false
       countIncrementalSlides: false
 ---
 name: toc
@@ -320,7 +320,7 @@ data(starwars, package = "dplyr")
 starwars %>%
   filter(species=="Human") %>%
   group_by(gender) %>%
-  summarise(V1 = mean(height, na.rm=T))
+  summarise(mean(height, na.rm=T))
 ```
 
 ]
@@ -352,7 +352,7 @@ data(starwars, package = "dplyr")
 starwars %>%
   filter(species=="Human") %>% #<<
   group_by(gender) %>%
-  summarise(V1 = mean(height, na.rm=T))
+  summarise(mean(height, na.rm=T))
 ```
 
 ]
@@ -384,7 +384,7 @@ data(starwars, package = "dplyr")
 starwars %>%
   filter(species=="Human") %>% 
   group_by(gender) %>%
-  summarise(V1 = mean(height, na.rm=T)) #<<
+  summarise(mean(height, na.rm=T)) #<<
 ```
 
 ]
@@ -416,7 +416,7 @@ data(starwars, package = "dplyr")
 starwars %>%
   filter(species=="Human") %>% 
   group_by(gender) %>% #<<
-  summarise(V1 = mean(height, na.rm=T)) 
+  summarise(mean(height, na.rm=T)) 
 ```
 
 ]
@@ -448,7 +448,7 @@ data(starwars, package = "dplyr")
 starwars %>%
   filter(species=="Human") %>%
   group_by(gender) %>%
-  summarise(V1 = mean(height, na.rm=T))
+  summarise(mean(height, na.rm=T))
 ```
 
 ]
@@ -694,7 +694,7 @@ starwars_dt[, .(name, height, mass, homeworld)] %>% head(2)
 
 # Aside: What's with the .()?
 
-We've now seen `.()` in a couple places, e.g the previous slide and [this slide](#intro) from earlier if you were paying close attention.
+We've now seen `.()` in a couple places, e.g the previous slide and [this slide](#fast) from earlier if you were paying close attention.
 - `.()` is just a data.table shortcut for `list()`. 
 
 We'll be using `.()` quite liberally once we start working subsetting and/or grouping by multiple variables at a time.
