@@ -331,7 +331,7 @@ starwars %>%
 starwars_dt = as.data.table(starwars)
 starwars_dt[
   species=="Human", 
-  mean(height, na.rm=T), 
+  .(V1 = mean(height, na.rm=T)), 
   by = gender]
 ```
 ]
