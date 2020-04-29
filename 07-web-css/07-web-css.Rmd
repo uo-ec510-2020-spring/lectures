@@ -4,7 +4,7 @@ subtitle: "Lecture 7: Webscraping: (1) Server-side and CSS"
 author:
   name: Grant R. McDermott
   affiliation: University of Oregon | [EC 607](https://github.com/uo-ec607/lectures)
-# date: Lecture 6  #"`r format(Sys.time(), '%d %B %Y')`"
+# date: Lecture 7  #"`r format(Sys.time(), '%d %B %Y')`"
 output: 
   html_document:
     theme: flatly
@@ -72,9 +72,9 @@ Over the next two lectures, we'll go over the main differences between the two a
 
 The good news is that both server-side and client-side websites allow for webscraping.^[As we'll see during the next lecture, scraping a website or application that is built on a client-side (i.e. API) framework is often easier; particularly when it comes to downloading information *en masse*.] If you can see it in your browser, you can scrape it. 
 
-### Caveat: Ethical and legal limitations
+### Caveat: Ethical ~~and legal~~ considerations
 
-The previous sentence elides some important ethical and legal considerations. Just because you *can* scrape it, doesn't mean you *should*. It is ultimately your responsibility to determine whether a website maintains legal restrictions on the content that it provides. Similarly, the tools that we'll be using are very powerful. It's fairly easy to write up a function or program that can overwhelm a host server or application through the sheer weight of requests. A computer can process commands much, much faster than we can ever type them up manually. We'll return to the "be nice" mantra at the end of this lecture, as well as in the next lecture. 
+The previous sentence elides some important ethical considerations. Just because you *can* scrape it, doesn't mean you *should*. Now, I first have to tell you that this paragraph used to contain a warning about the legal restrictions pertaining to webscraping activity. I've decided to drop those in the wake of the landmark [*hiQ Labs vs LinkedIn*](https://twitter.com/kjhealy/status/1255636154453549057) court ruling. (Short version: It is currently legal to scrape data from the web using automated tools, as long as the data are publicly available.) However, it's still important to realise that the tools we'll be using over these next two lectures are very powerful. A computer can process commands much, much faster than we can ever type them up manually. It's pretty easy to write up a function or program that can overwhelm a host server or application through the sheer weight of requests.Or, just as likely, the host server has built-in safeguards that will block you in case of a suspected malicious [attack](https://en.wikipedia.org/wiki/Denial-of-service_attack). We'll return to the "be nice" mantra at the end of this lecture, as well as in the next lecture. 
 
 ## Webscraping with **rvest** (server-side)
 
