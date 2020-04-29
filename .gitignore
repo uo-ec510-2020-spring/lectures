@@ -6,4 +6,6 @@
 /**/.httr-oauth
 **/*_cache/
 **/cache/
+**/TEST/
+**/EXTRA/
 .Rproj.user
