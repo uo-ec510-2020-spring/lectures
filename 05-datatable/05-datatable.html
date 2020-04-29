@@ -536,8 +536,8 @@ Note that we don't actually need commas when we're only subsetting on `i` (i.e. 
 # Order by rows (arrange)
 
 ```r
-starwars_dt[order(birth_year)] ## (temporarily) sort by youngest to oldest
-starwars_dt[-order(bith_year)] ## (temporarily) sort by oldest to youngest
+starwars_dt[order(birth_year)]  ## (temporarily) sort by youngest to oldest
+starwars_dt[order(-birth_year)] ## (temporarily) sort by oldest to youngest
 ```
 
 --
@@ -840,9 +840,9 @@ And, you can rename a column as follows (again, run this yourself):
 
 
 ```r
-setnames[starwars_dt, old = "name", new = "alias"][]
+setnames(starwars_dt, old = "name", new = "alias")[]
 ## Safer to change it back, just in case we use "name" on a later slide again
-setnames[starwars_dt, old = "alias", new = "name"]
+setnames(starwars_dt, old = "alias", new = "name")
 ```
 
 --
@@ -1560,13 +1560,13 @@ storms_dt[, .(wind = mean(wind),
 
 # Don't be a fanatic
 
-Closely related to the second first point: Don't try to shoehorn every problem into a tidyverse or data.table framework.&lt;sup&gt;1&lt;/sup&gt;
-- Recall my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem." You can add data.table to that list.
+Closely related to the second first point: Don't try to shoehorn every problem into a tidyverse or data.table framework.
+- Recall my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem. (You can add data.table to that list.)
 
 --
 
-Having worked extensively with both packages, I think it fair to say that there are things the tidyverse (dplyr+tidyr) does better, and there are things that data.table does better.
-- If you find a great solution on StackOverflow that uses the "other" package... use it!
+Having worked extensively with both packages, I think it's fair to say that there are things the tidyverse (dplyr+tidyr) does better, and there are things that data.table does better.
+- If you find a great solution on StackOverflow that uses the "other" package... use it.
 - Don't be a fanatic. Insisting on ecosystem purity is rarely worth it. 
 
 --
@@ -1640,7 +1640,7 @@ Not quite a fast as the native data.table method, but a 36x speed-up for free? I
 
 --
 
-*Aside:* dtplyr automatically prints its data.table translation to screen. This can be super helpful when you first come over to data.table from the tidyverse.
+**Aside:** dtplyr automatically prints its data.table translation to screen. This can be super helpful when you first come over to data.table from the tidyverse.
 
 
 ```r
@@ -1675,8 +1675,8 @@ The basic syntax is `DT[i, j, by]`
 - `j` What to do?
 - `by` Grouped by what?
 
-data.table also (re)introduces some new ideas like modify by reference (e.g. `:=`), as well as syntax (e.g. `.()`, `.SDcols`).
-- All of these ideas support data.table's core goals: Maximise performance and flexibility, whilst maintaining a concise and consistent syntax.
+data.table (re)introduces some new ideas like modify by reference (e.g. `:=`), as well as syntax (e.g. `.()`, `.SD` `.SDcols`, etc.).
+- All of these ideas support data.table's core goals: Maximise performance and flexibility, whilst maintaining a concise and consistent syntax. They are worth learning.
 
 Pro tip: Use keys to order your data and yield dramatic speed-ups.
 
