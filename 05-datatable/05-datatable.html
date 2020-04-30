@@ -1644,15 +1644,18 @@ Not quite a fast as the native data.table method, but a 36x speed-up for free? I
 
 
 ```r
-lazy_dt(starwars) %&gt;% filter(species=="humans") %&gt;% group_by(gender) %&gt;% summarise(height = mean(height, na.rm=T))
+lazy_dt(starwars) %&gt;% filter(species=="Human") %&gt;% group_by(gender) %&gt;% summarise(height = mean(height, na.rm=TRUE))
 ```
 
 ```
 ## Source: local data table [?? x 2]
-## Call:   `_DT1`[species == "humans"][, .(height = mean(height, na.rm = ..T)), 
+## Call:   `_DT1`[species == "Human"][, .(height = mean(height, na.rm = TRUE)), 
 ##     keyby = .(gender)]
 ## 
-## # … with 2 variables: gender &lt;chr&gt;, height &lt;dbl&gt;
+##   gender    height
+##   &lt;chr&gt;      &lt;dbl&gt;
+## 1 feminine    160.
+## 2 masculine   182.
 ## 
 ## # Use as.data.table()/as.data.frame()/as_tibble() to access results
 ```
