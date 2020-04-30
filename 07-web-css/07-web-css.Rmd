@@ -3,7 +3,7 @@ title: "Big Data in Economics"
 subtitle: "Lecture 7: Webscraping: (1) Server-side and CSS"
 author:
   name: Grant R. McDermott
-  affiliation: University of Oregon | [EC 607](https://github.com/uo-ec607/lectures)
+  affiliation: University of Oregon | [EC 510](https://github.com/uo-ec510-2020-spring/lectures)
 # date: Lecture 7  #"`r format(Sys.time(), '%d %B %Y')`"
 output: 
   html_document:
