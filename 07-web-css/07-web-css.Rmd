@@ -106,7 +106,8 @@ But how do we identify the right CSS selectors in the first place? Well, I'm goi
 
 Say that we want to scrape the Wikipedia page on the [**Men's 100 metres world record progression**](http://en.wikipedia.org/wiki/Men%27s_100_metres_world_record_progression). 
 
-First, open up this page in your browser and take a look at its structure. 
+First, open up this page in your browser and take a look at its structure.
+
 - What type of objects does it contain? 
 - How many tables does it have? 
 - Do these tables all share the same columns? 
