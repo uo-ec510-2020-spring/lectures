@@ -1387,7 +1387,7 @@ Not quite a fast as the native data.table method, but a 36x speed-up for free? I
 **Aside:** dtplyr automatically prints its data.table translation to screen. This can be super helpful when you first come over to data.table from the tidyverse.
 
 ```{r dtplyr_call_ex}
-lazy_dt(starwars) %>% filter(species=="humans") %>% group_by(gender) %>% summarise(height = mean(height, na.rm=T))
+lazy_dt(starwars) %>% filter(species=="Human") %>% group_by(gender) %>% summarise(height = mean(height, na.rm=TRUE))
 ```
 
 
