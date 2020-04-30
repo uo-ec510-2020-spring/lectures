@@ -14,6 +14,17 @@ output:
     toc_depth: 4
     toc_float: yes
     keep_md: false
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    dev: cairo_pdf
+    fig_width: 7
+    fig_height: 6
+    pandoc_args:
+        --template=../Pandoc-extras/mytemplate.tex ## http://labrtorian.com/2019/08/26/rmarkdown-template-that-manages-academic-affiliations/
+mainfont: cochineal
+sansfont: Fira Sans
+monofont: Fira Code #Although, see: https://tex.stackexchange.com/q/294362
 ---
 
 ```{r setup, include=FALSE}
@@ -129,7 +140,15 @@ Uh-oh! It seems that we immediately run into an error. I won't go into details h
 
 Fortunately, there's a more precise way of determing the right selectors using the "inspect web element" feature that is [available in all modern browsers](https://www.lifewire.com/get-inspect-element-tool-for-browser-756549). In this case, I'm going to use Google Chrome (**Ctrl+Shift+I**, or right-click and choose "Inspect"). I proceed by scrolling over the source elements until Chrome highlights the table of interest. Then right-click again and choose **Copy -> Copy selector**. Here's a GIF animation of these steps:
 
-![](pics/inspect100m.gif)
+```{r inspect100m_gif, echo=FALSE, out.width='100%'}
+fmt <- rmarkdown::default_output_format(knitr::current_input())$name
+if (fmt == "html_document"){
+  knitr::include_graphics('pics/inspect100m.gif')
+}
+if (fmt == "pdf_document"){
+  knitr::include_graphics('pics/inspect100m.pdf')
+}
+```
 
 Using this method, I get "#mw-content-text > div > table:nth-child(8)". Let's see whether it works this time. Again, I'll be using the `rvest::html_table(fill=TRUE)` function to coerce the resulting table into a data frame.
 
