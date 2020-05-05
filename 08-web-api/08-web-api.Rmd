@@ -341,7 +341,7 @@ params = list(
   )
 ```
 
-We're going to be revisiting (and setting) environment variables once we get to the cloud computation part of the course. So please make sure that you've understood this section and that you're new FRED API key works.
+We're going to be revisiting (and setting) environment variables once we get to the cloud computation part of the course. So please make sure that you've understood this section and that your new FRED API key works.
 
 ### Use a package
 
