@@ -144,7 +144,7 @@ Getting back on track, let's plot our tree data just to show it worked. One mino
 ```{r nyc3}
 nyc_trees %>% 
   select(longitude, latitude, stump_diam, spc_common, spc_latin, tree_id) %>% 
-  mutate_at(vars(longitude:stump_diam), as.numeric) %>% 
+  mutate(across(longitude:stump_diam, as.numeric)) %>% 
   ggplot(aes(x=longitude, y=latitude, size=stump_diam)) + 
   geom_point(alpha=0.5) +
   scale_size_continuous(name = "Stump diameter") +
@@ -262,7 +262,7 @@ Okay! We've finally got our data and are nearly ready for some plotting. Recall 
 
 fred <-
   fred %>%
-  mutate_at(vars(realtime_start:date), ymd) %>%
+  mutate(across(realtime_start:date, ymd)) %>%
   mutate(value = as.numeric(value)) 
 ```
 
