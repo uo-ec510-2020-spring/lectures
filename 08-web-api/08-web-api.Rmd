@@ -25,6 +25,7 @@ output:
 mainfont: cochineal
 sansfont: Fira Sans
 monofont: Fira Code #Although, see: https://tex.stackexchange.com/q/294362
+urlcolor: blue
 always_allow_html: true
 ---
 
@@ -442,7 +443,7 @@ The above table looks great, except for the fact that it's just a single snapsho
 
 But how to do this? Well, in the spirit of art-vs-science, let's open up the Inspect window of the rankings page again and start exploring. What happens if we click on the calendar element, say, change the year to "2018" and month to "May"? (Do this yourself.)
 
-This looks promising! Essentially, we get the same API endpoint that we saw previously, but now appended with a date, https://cmsapi.pulselive.com/rugby/rankings/mru?date=2018-05-01&client=pulse. If you were to continue along in this manner --- clicking on the website calendar and looking for XHR traffic --- you would soon realise that these date suffixes follow a predictable pattern: They are spaced out a week apart and always fall on a Monday. In other words, World Rugby updates its international rankings table weekly and publishes the results on Mondays. 
+This looks promising! Essentially, we get the same API endpoint that we saw previously, but now appended with a date, https://cmsapi.pulselive.com/rugby/rankings/mru?date=2018-05-30&client=pulse. If you were to continue along in this manner --- clicking on the website calendar and looking for XHR traffic --- you would soon realise that these date suffixes follow a predictable pattern: They are spaced out a week apart and always fall on a Monday. In other words, World Rugby updates its international rankings table weekly and publishes the results on Mondays. 
 
 We now have enough information to write a function that will loop over a set of dates and pull data from the relevant API endpoint.  To start, we need a vector of valid dates to loop over. I'm going to use various functions from the `lubridate` package to help with this. Note that I'm only to extract a few data points --- one observation a year for the last decade or so --- since I only want to demonstrate the principle. No need to hammer the host server. (More on that below.)
 
@@ -539,6 +540,8 @@ New Zealand's extended dominance in the global game is extraordinary, especially
 
 
 ## Further resources and exercises
+
+- [Here](https://www.pscp.tv/w/1ynKOpVnERrGR) is a short, live video stream that I did for scraping traffic fatality data from [LA's Open Data portal](https://data.lacity.org/). As I mention in the video, this covers very similar ground to today's lecture. But I do expand a bit on using API parameters to query (i.e. wrangle and summarise) data directly up on the host server before scraping it.
 
 - [Tyler Clavelle](https://twitter.com/tclavl) has written several cool [blog posts](https://tclavelle.github.io/blog/) on interacting with APIs through R. I especially recommend going over --- and replicating --- his excellent [tutorial on the GitHub API](https://tclavelle.github.io/blog/r_and_apis/). 
 
