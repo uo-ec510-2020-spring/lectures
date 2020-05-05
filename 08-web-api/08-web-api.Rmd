@@ -404,7 +404,7 @@ rugby <- fromJSON(endpoint)
 str(rugby)
 ```
 
-We have a nested list, where what looks to be the main element of interest, `$entries`, is itself a list.^[I know that R says `rugby$entries` is a data.frame, but we can tell from the `str()` call that it follows a list structure. In particular, the `rugby$entries$team` sub-element is a itself data frame.] Let's extract the `$entries` element and have a look at its structure. We could use the `str()` base function, but again the interactivity of `listviewer::jsonedit()` is hard to beat for complicated list structures. 
+We have a nested list, where what looks to be the main element of interest, `$entries`, is itself a list.^[I know that R says `rugby$entries` is a data.frame, but we can tell from the `str()` call that it follows a list structure. In particular, the `rugby$entries$team` sub-element is a itself data frame.] Let's take a closer look at the `$entries` element. We could use the `str()` function again to do so. But `listviewer::jsonedit()` is ideally suited for exploring nested lists in an interactive session, so that's what I recommend you use. 
 
 ```{r rugby2, out.width="100%", out.height="10%"}
 # str(rugby$entries) ## Base option
@@ -417,7 +417,7 @@ For completeness, let's take a peak at the `rugby$entries$team` data frame to co
 head(rugby$entries$team)
 ```
 
-Okay, a clearer picture is starting to emerge. It looks like we can just bind the columns of the `rugby$entries$team` data frame directly to the other elements of the parent `$team` "data frame" (actually: "list"). Let's do that using `dplyr::bind_cols()` and then clean things up a bit. I'm going to call the resulting data frame `rankings`.
+Okay, a clearer picture is starting to emerge. It looks like we can just bind the columns of the `rugby$entries$team` data frame directly to the other elements of the parent `$entries` "data frame" (actually: "list"). Let's do that using `dplyr::bind_cols()` and then clean things up a bit. I'm going to call the resulting data frame `rankings`.
 
 ```{r rugby3, message=F}
 # library(janitor) ## Already loaded above
