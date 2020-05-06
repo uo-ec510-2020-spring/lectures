@@ -1781,10 +1781,11 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 </div>
 <div id="iteration" class="section level2">
 <h2>Iteration</h2>
-<p>Alongside control flow, the most important early programming skill to master is iteration. In particular, we want to write functions that can iterate — or <em>map</em> — over a set of inputs.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> By far the most common way to iterate across different programming languages is <em>for</em> loops. Indeed, we already saw some examples of <em>for</em> loops back in the shell lecture (see <a href="https://raw.githack.com/uo-ec607/lectures/master/03-shell/03-shell.html#95">here</a>). However, while R certainly accepts standard <em>for</em> loops, I’m going to advocate that you adopt what is known as a “functional programming” approach to writing loops. Let’s dive into the reasons why and how these approaches differ.</p>
+<p>Alongside control flow, the most important early programming skill to master is iteration. In particular, we want to write functions that can iterate — or <em>map</em> — over a set of inputs.<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> By far the most common way to iterate across different programming languages is <em>for</em> loops. Indeed, we already saw some examples of <em>for</em> loops back in the shell lecture. However, while R certainly accepts standard <em>for</em> loops, I’m going to advocate that you adopt what is known as a “functional programming” approach to writing loops. Let’s dive into the reasons why and how these approaches differ.</p>
 <div id="vectorisation" class="section level3">
 <h3>Vectorisation</h3>
-<p>The first question you need to ask is: “Do I need to iterate at all?” You may remember from a previous lecture that I spoke about R being <em>vectorised</em>. Which is to say that you can apply a function to every element of a vector at once, rather than one at a time. Let’s demonstrate this property with our <code>square</code> function:</p>
+<p>The first question you should be asking yourself is: “Do I need to iterate at all?”</p>
+<p>You may remember from a previous lecture that I spoke about R being <em>vectorised</em>. Which is to say that you can apply a function to every element of a vector at once, rather than one at a time. Let’s demonstrate this property with our <code>square</code> function:</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="kw">square</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 5 x 2
 ##   value value_squared
@@ -1800,10 +1801,11 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 ##   &lt;dbl&gt;         &lt;dbl&gt;
 ## 1     2             4
 ## 2     4            16</code></pre>
-<p>So you may not need to worry about explicit iteration at all. (Bonus: Vectorised operations are also extremely fast.) That being said, there are certainly cases where you will need to iterate. Let’s explore with some toy examples — some of which could be vectorised, but that’s not the pedagogical point — which provide a mental springboard for thinking about more complex cases.</p>
+<p>So you may not need to worry about explicit iteration at all. (Bonus: Vectorised operations are also extremely fast.) That being said, there are certainly cases where you will need to iterate. Let’s explore with some simple examples that will provide a mental springboard for thinking about more complex cases.</p>
+<p><em>Note: Most of the iteration examples that follow could themselves be vectorised. But my goal is to illustrate some general principles about writing iterative functions in R (what format they take, etc.), rather than optimising performance of these toy examples.</em></p>
 </div>
-<div id="for-loops.-simple-but-limited-and-sometimes-dangerous" class="section level3">
-<h3><em>for</em> loops. Simple, but limited (and sometimes dangerous)</h3>
+<div id="for-loops" class="section level3">
+<h3><em>for</em> loops</h3>
 <p>In R, standard <em>for</em> loops take a pretty intuitive form. For example:</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>) <span class="kw">print</span>(LETTERS[i])</span></code></pre></div>
 <pre><code>## [1] &quot;A&quot;
@@ -1827,13 +1829,9 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <pre><code>## [1] 80.33 82.13 83.93 85.73 87.53 89.33</code></pre>
 <p>Unfortunately, basic <em>for</em> loops in R also come with some downsides. Historically, they used to be significantly slower and memory consumptive than alternative methods (see below). This has largely been resolved, but I’ve still run into cases where an inconspicuous <em>for</em> loop has brought an entire analysis crashing to its knees.<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> The bigger problem with <em>for</em> loops, however, is that they deviate from the norms and best practices of <strong>functional programming</strong>.</p>
 </div>
-</div>
-<div id="functional-programming" class="section level2">
-<h2>Functional programming</h2>
-<p>The concept of functional programming is arguably the most important thing you can take away from today’s lecture. Thus, while it can certainly be applied to iteration, I’m going to cover it in its own section.</p>
-<div id="fp-defined" class="section level3">
-<h3>FP defined</h3>
-<p>Here is <a href="http://adv-r.had.co.nz/Functional-programming.html">Hadley Wickham</a> explaining the key idea:</p>
+<div id="functional-programming" class="section level3">
+<h3>Functional programming</h3>
+<p>The concept of functional programming (FP) is arguably the most important thing that you can take away from today’s lecture. In his excellent book, <em>Advanced R</em>, <a href="http://adv-r.had.co.nz/Functional-programming.html">Hadley Wickham</a> explains the core idea as follows.</p>
 <blockquote>
 <p>R, at its heart, is a functional programming (FP) language. This means that it provides many tools for the creation and manipulation of functions. In particular, R has what’s known as first class functions. You can do anything with functions that you can do with vectors: you can assign them to variables, store them in lists, pass them as arguments to other functions, create them inside functions, and even return them as the result of a function.</p>
 </blockquote>
@@ -1851,9 +1849,8 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <li>The <code>map*()</code> family of functions from the <a href="https://purrr.tidyverse.org/"><strong>purrr</strong></a>.</li>
 </ol>
 <p>Let’s explore these in more depth.</p>
-</div>
-<div id="lapply-and-co." class="section level3">
-<h3>1) lapply and co.</h3>
+<div id="lapply-and-co." class="section level4">
+<h4>1) lapply and co.</h4>
 <p>Base R contains a very useful family of <code>*apply</code> functions. I won’t go through all of these here — see <code>?apply</code> or <a href="https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/">this blog post</a> among numerous excellent resources — but they all follow a similar philosophy and syntax. The good news is that this syntax very closely mimics the syntax of basic for-loops. For example, consider the code below, which is analgous to our first <em>for</em> loop above, but now invokes a <strong><code>base::lapply()</code></strong> call instead.</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="co"># for(i in 1:10) print(LETTERS[i]) ## Our original for loop (for comparison)</span></span>
 <span id="cb46-2"><a href="#cb46-2"></a><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="cf">function</span>(i) LETTERS[i])</span></code></pre></div>
@@ -1912,58 +1909,25 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 ##  9     9 I    
 ## 10    10 J</code></pre>
 <p>Taking a step back, while the default list-return behaviour may not sound ideal at first, I’ve found that I use <code>lapply()</code> more frequently than any of the other <code>apply</code> family members. A key reason is that my functions normally return multiple objects of different type (which makes lists the only sensible format)… or a single data frame (which is where <code>dplyr::bind_rows()</code> or <code>data.table::rbindlist()</code> come in).</p>
-<div id="aside-quick-look-at-sapply" class="section level4">
-<h4>Aside: quick look at sapply()</h4>
+<div id="aside-quick-look-at-sapply" class="section level5">
+<h5>Aside: Quick look at sapply()</h5>
 <p>Another option that would work well in the this particular case is <code>sapply()</code>, which stands for “<strong>s</strong>implify apply”. This is essentially a wrapper around <code>lapply</code> that tries to return simplified output that matches the input type. If you feed the function a vector, it will try to return a vector, etc.</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a><span class="kw">sapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="cf">function</span>(i) LETTERS[i]) </span></code></pre></div>
 <pre><code>##  [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot; &quot;F&quot; &quot;G&quot; &quot;H&quot; &quot;I&quot; &quot;J&quot;</code></pre>
 </div>
-</div>
-<div id="create-and-iterate-over-named-functions" class="section level3">
-<h3>Create and iterate over named functions</h3>
-<p>As you may have guessed already, we can split the function and the iteration (and binding) into separate steps. This is generally a good idea, since you typically create (named) functions with the goal of reusing them.</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="co">## Create a named function</span></span>
-<span id="cb52-2"><a href="#cb52-2"></a>num_to_alpha &lt;-<span class="st"> </span></span>
-<span id="cb52-3"><a href="#cb52-3"></a><span class="st">  </span><span class="cf">function</span>(i) {</span>
-<span id="cb52-4"><a href="#cb52-4"></a>  df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">num =</span> i, <span class="dt">let =</span> LETTERS[i])</span>
-<span id="cb52-5"><a href="#cb52-5"></a>  <span class="kw">return</span>(df)</span>
-<span id="cb52-6"><a href="#cb52-6"></a>  }</span></code></pre></div>
-<p>Now, we can easily iterate over our function using different input values. For example,</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, num_to_alpha) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">bind_rows</span>()</span></code></pre></div>
-<pre><code>## # A tibble: 10 x 2
-##      num let  
-##    &lt;int&gt; &lt;chr&gt;
-##  1     1 A    
-##  2     2 B    
-##  3     3 C    
-##  4     4 D    
-##  5     5 E    
-##  6     6 F    
-##  7     7 G    
-##  8     8 H    
-##  9     9 I    
-## 10    10 J</code></pre>
-<p>Or,</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="kw">lapply</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">26</span>, <span class="dv">3</span>), num_to_alpha) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">bind_rows</span>()</span></code></pre></div>
-<pre><code>## # A tibble: 4 x 2
-##     num let  
-##   &lt;dbl&gt; &lt;chr&gt;
-## 1     1 A    
-## 2     5 E    
-## 3    26 Z    
-## 4     3 C</code></pre>
-<div id="progress-bars-with-the-pbapply-package" class="section level4">
-<h4>Progress bars with the <strong>pbapply</strong> package!</h4>
-<p>I’m a big fan of the <a href="https://github.com/psolymos/pbapply"><strong>pbapply</strong></a> package, which is a lightweight wrapper around the <code>*apply</code> functions that adds a progress bar. And who doesn’t like progress bars? Personally, I find it incredibly helpful to see how a function is progressing, or get a sense of how much longer I can expect to wait before completion. <code>pbapply</code> offers versions for all of the <code>*apply</code> family, but the one that I use the most is (unsuprisingly) <code>pbapply::pblapply()</code>.</p>
+<div id="aside-progress-bars" class="section level5">
+<h5>Aside: Progress bars!</h5>
+<p>Who doesn’t like progress bars? Personally, I find it incredibly helpful to see how a function is progressing, or get a sense of how much longer I can expect to wait before completion.</p>
+<p>Along those lines, I’m a big fan of the <a href="https://github.com/psolymos/pbapply"><strong>pbapply</strong></a> package, which is a lightweight wrapper around the <code>*apply</code> functions that adds a progress bar. <code>pbapply</code> offers versions for all of the <code>*apply</code> family, but the one that I use the most is (unsurprisingly) <code>pbapply::pblapply()</code>.</p>
 <p><em>Note: You will need to run this next example interactively to see the effect properly.</em></p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="co"># library(pbapply) ## Already loaded</span></span>
-<span id="cb57-2"><a href="#cb57-2"></a></span>
-<span id="cb57-3"><a href="#cb57-3"></a><span class="kw">pblapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="cf">function</span>(i) {</span>
-<span id="cb57-4"><a href="#cb57-4"></a>  df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">num =</span> i, <span class="dt">let =</span> LETTERS[i])</span>
-<span id="cb57-5"><a href="#cb57-5"></a>  <span class="kw">Sys.sleep</span>(<span class="dv">1</span>)</span>
-<span id="cb57-6"><a href="#cb57-6"></a>  <span class="kw">return</span>(df)</span>
-<span id="cb57-7"><a href="#cb57-7"></a>  }) <span class="op">%&gt;%</span></span>
-<span id="cb57-8"><a href="#cb57-8"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="co"># library(pbapply) ## Already loaded</span></span>
+<span id="cb52-2"><a href="#cb52-2"></a></span>
+<span id="cb52-3"><a href="#cb52-3"></a><span class="kw">pblapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="cf">function</span>(i) {</span>
+<span id="cb52-4"><a href="#cb52-4"></a>  df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">num =</span> i, <span class="dt">let =</span> LETTERS[i])</span>
+<span id="cb52-5"><a href="#cb52-5"></a>  <span class="kw">Sys.sleep</span>(<span class="dv">1</span>)</span>
+<span id="cb52-6"><a href="#cb52-6"></a>  <span class="kw">return</span>(df)</span>
+<span id="cb52-7"><a href="#cb52-7"></a>  }) <span class="op">%&gt;%</span></span>
+<span id="cb52-8"><a href="#cb52-8"></a><span class="st">  </span><span class="kw">bind_rows</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 10 x 2
 ##      num let  
 ##    &lt;int&gt; &lt;chr&gt;
@@ -1978,13 +1942,14 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 ##  9     9 I    
 ## 10    10 J</code></pre>
 <p>Another thing that I really like about the <code>pblapply()</code> function is that it allows for easy implementation of parallel (i.e. multicore) processing that works across operating systems. We’ll cover this next week, though.</p>
+<p>There’s also a newish package on the scene, <a href="https://github.com/HenrikBengtsson/progressr"><strong>progressr</strong></a>, which provides a unified API for progress updates across multiple iteration frameworks in R. I won’t cover it here, but it’s pretty neat and simple to use, so check it out.</p>
 </div>
 </div>
-<div id="purrr-package" class="section level3">
-<h3>2) purrr package</h3>
+<div id="purrr-package" class="section level4">
+<h4>2) purrr package</h4>
 <p>The tidyverse offers its own enhanced implementation of the base <code>*apply()</code> functions through the <a href="https://purrr.tidyverse.org/"><strong>purrr</strong></a> package.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> The key function to remember here is <code>purrr::map()</code>. And, indeed, the syntax and output of this command are effectively identical to <code>base::lapply()</code>:</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="co"># lapply(1:10, num_to_alpha) ## lapply version from earlier</span></span>
-<span id="cb59-2"><a href="#cb59-2"></a><span class="kw">map</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, num_to_alpha)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="co"># lapply(1:10, num_to_alpha) ## lapply version from earlier</span></span>
+<span id="cb54-2"><a href="#cb54-2"></a><span class="kw">map</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, num_to_alpha)</span></code></pre></div>
 <pre><code>## [[1]]
 ## # A tibble: 1 x 2
 ##     num let  
@@ -2045,8 +2010,8 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 ##   &lt;int&gt; &lt;chr&gt;
 ## 1    10 J</code></pre>
 <p>Given these similarities, I won’t spend much time on <strong>purrr</strong>. Although, I do think it will be the optimal entry point for many you when it comes to programming and iteration. You have already learned the syntax, so it should be very easy to switch over. However, one additional thing I wanted to flag for today is that <code>map()</code> also comes with its own variants, which are useful for returning objects of a desired type. For example, we can use <code>purrr::map_df()</code> to return a data frame.</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a><span class="co"># lapply(1:10, num_to_alpha) %&gt;% bind_rows() ## lapply version from earlier.</span></span>
-<span id="cb61-2"><a href="#cb61-2"></a><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, num_to_alpha)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="co"># lapply(1:10, num_to_alpha) %&gt;% bind_rows() ## lapply version from earlier.</span></span>
+<span id="cb56-2"><a href="#cb56-2"></a><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, num_to_alpha)</span></code></pre></div>
 <pre><code>## # A tibble: 10 x 2
 ##      num let  
 ##    &lt;int&gt; &lt;chr&gt;
@@ -2062,10 +2027,45 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 ## 10    10 J</code></pre>
 <p>Note that this is more efficient (i.e. involves less typing) than the <code>lapply()</code> version, since we don’t have to go through the extra step of binding rows at the end.</p>
 </div>
+</div>
+<div id="create-and-iterate-over-named-functions" class="section level3">
+<h3>Create and iterate over named functions</h3>
+<p>As you may have guessed already, we can split the function and the iteration (and binding) into separate steps. This is generally a good idea, since you typically create (named) functions with the goal of reusing them.</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a><span class="co">## Create a named function</span></span>
+<span id="cb58-2"><a href="#cb58-2"></a>num_to_alpha &lt;-<span class="st"> </span></span>
+<span id="cb58-3"><a href="#cb58-3"></a><span class="st">  </span><span class="cf">function</span>(i) {</span>
+<span id="cb58-4"><a href="#cb58-4"></a>  df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">num =</span> i, <span class="dt">let =</span> LETTERS[i])</span>
+<span id="cb58-5"><a href="#cb58-5"></a>  <span class="kw">return</span>(df)</span>
+<span id="cb58-6"><a href="#cb58-6"></a>  }</span></code></pre></div>
+<p>Now, we can easily iterate over our function using different input values. For example,</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, num_to_alpha) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">bind_rows</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 10 x 2
+##      num let  
+##    &lt;int&gt; &lt;chr&gt;
+##  1     1 A    
+##  2     2 B    
+##  3     3 C    
+##  4     4 D    
+##  5     5 E    
+##  6     6 F    
+##  7     7 G    
+##  8     8 H    
+##  9     9 I    
+## 10    10 J</code></pre>
+<p>Or,</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a><span class="kw">lapply</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">26</span>, <span class="dv">3</span>), num_to_alpha) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">bind_rows</span>()</span></code></pre></div>
+<pre><code>## # A tibble: 4 x 2
+##     num let  
+##   &lt;dbl&gt; &lt;chr&gt;
+## 1     1 A    
+## 2     5 E    
+## 3    26 Z    
+## 4     3 C</code></pre>
+</div>
 <div id="iterate-over-multiple-inputs" class="section level3">
 <h3>Iterate over multiple inputs</h3>
 <p>Thus far, we have only been working with functions that take a single input when iterating. For example, we feed them a single vector (even though that vector contains many elements that drive the iteration process). But what if we want to iterate over multiple inputs? Consider the following function, which takes two separate variables <code>x</code> and <code>y</code> as inputs, combines them in a data frame, and then uses them to create a third variable <code>z</code>.</p>
-<p><em>Note: Again, this is a rather silly function that we could easily improve upon using standard (vectorised) tools. But my goal here is to demonstrate programming principles with simple examples that carry over to more complicated cases.</em></p>
+<p><em>Note: Again, this is a rather silly function that we could easily improve upon using standard (vectorised) tools. But my goal here is to demonstrate programming principles with simple examples that carry over to more complicated cases where vectorisation is not possible.</em></p>
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a><span class="co">## Create a named function</span></span>
 <span id="cb63-2"><a href="#cb63-2"></a>multi_func &lt;-<span class="st"> </span></span>
 <span id="cb63-3"><a href="#cb63-3"></a><span class="st">  </span><span class="cf">function</span>(x, y) {</span>
@@ -2125,7 +2125,7 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <p>It basically boils down to the fact that I feel this gives me more control over my functions and inputs.</p>
 <ul>
 <li>I don’t have to worry about accidentally feeding separate inputs of different lengths. Try running the above functions with an <code>x</code> vector input of <code>1:10</code>, for example. (Leave everything else unchanged.) <code>pmap()</code> will at least fail to iterate and give you a helpful message, but <code>mapply</code> will actually complete with totally misaligned columns. Putting everything in a (rectangular) data frame forces you to ensure the equal length of inputs <em>a priori</em>.</li>
-<li>Relatedly, I often need to run a function over all possible combinations of different inputs. A really convenient way to do this is with the <code>base::expand.grid()</code> function, which automatically generates a data frame of all combinations. So it’s convenient for me to use this data frame as an input directly in my function.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a></li>
+<li>Similarly, I often need to run a function over all possible combinations of different inputs. A really convenient way to do this is with the <code>base::expand.grid()</code> function, which automatically generates a data frame of all combinations.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> So it’s convenient for me to use this data frame as an input directly in my function.</li>
 <li>In my view, it’s just simpler and cleaner to keep things down to a single input. This will be harder to see in the simple example that I’m going to present next, but I’ve found that it can make a big difference with complicated functions that have a lot of nesting (i.e. functions of functions) and/or parallelization.</li>
 </ul>
 <p>Those justifications aside, let’s see how this might work with an example. Consider the following function:</p>
@@ -2190,7 +2190,7 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <p>In the next two lectures, we’ll dive into more advanced programming and function topics (debugging, parallel implementation, etc.). However, I hope that today has given you solid grasp of the fundamentals. I highly encourage you to start writing some of your own functions. You will be doing this a <em>lot</em> as your career progresses. Establishing an early mastery of function writing will put you on the road to awesome data science success<sup>TM</sup>. Here are some additional resources for both inspiration and reference:</p>
 <ul>
 <li>Garrett Grolemund and Hadley Wickham’s <a href="http://r4ds.had.co.nz"><em><b>R for Data Science</b></em></a> book — esp. chapters <a href="http://r4ds.had.co.nz/functions.html">19 (“Functions)”)</a> and <a href="http://r4ds.had.co.nz/iteration.html">21 (“Iteration)”)</a> — covers much of the same ground as we have here, with particular emphasis on the <strong>purrr</strong> package for iteration.</li>
-<li>If you’re looking for an in-depth treatment, then I can highly recommend Hadley’s <a href="https://adv-r.hadley.nz"><em><b>Advanced R</b></em></a> (2nd ed.) He provides a detailed yet readable overview of all the concepts that we touched on today, including more on his (and R’s) philospohy regarding functional programming (see <a href="https://adv-r.hadley.nz/fp.html">Section ||</a>).</li>
+<li>If you’re looking for an in-depth treatment, then I can highly recommend Hadley’s <a href="https://adv-r.hadley.nz"><em><b>Advanced R</b></em></a> (2nd ed.) He provides a detailed yet readable overview of all the concepts that we touched on today, including more on his (and R’s) philosophy regarding functional programming (see <a href="https://adv-r.hadley.nz/fp.html">Section ||</a>).</li>
 <li>If you’re in the market for a more concise overview of the different <code>*apply()</code> functions, then I recommend <a href="https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/">this blog post</a> by Neil Saunders.</li>
 <li>On the other end of the scale, Jenny Bryan (all hail) has created a fairly epic <a href="https://jennybc.github.io/purrr-tutorial">purrr tutorial</a> mini-website. (Bonus: She goes into more depth about working with lists and list columns.)</li>
 </ul>
