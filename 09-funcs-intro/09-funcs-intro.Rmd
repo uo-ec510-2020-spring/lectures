@@ -499,7 +499,7 @@ While the above approaches work perfectly well, I find that I don't actually use
 It basically boils down to the fact that I feel this gives me more control over my functions and inputs. 
 
 - I don't have to worry about accidentally feeding separate inputs of different lengths. Try running the above functions with an `x` vector input of `1:10`, for example. (Leave everything else unchanged.) `pmap()` will at least fail to iterate and give you a helpful message, but `mapply` will actually complete with totally misaligned columns. Putting everything in a (rectangular) data frame forces you to ensure the equal length of inputs *a priori*.
-- Relatedly, I often need to run a function over all possible combinations of different inputs. A really convenient way to do this is with the `base::expand.grid()` function, which automatically generates a data frame of all combinations. So it's convenient for me to use this data frame as an input directly in my function.^[We encountered some related tidyverse functions (`tidyr::expand()` and `tidyr::complete()`) in an earlier lecture, as well as your second assignment. Of course, you could could also extract the columns of the data frame as separate vectors and then feed these into `pmap()`/`mapply()` if you prefer.]
+- Similarly, I often need to run a function over all possible combinations of different inputs. A really convenient way to do this is with the `base::expand.grid()` function, which automatically generates a data frame of all combinations.^[We encountered some related tidyverse functions (`tidyr::expand()` and `tidyr::complete()`) in an earlier lecture, as well as your second assignment. Of course, you could could also extract the columns of the data frame as separate vectors and then feed these into `pmap()`/`mapply()` if you prefer.] So it's convenient for me to use this data frame as an input directly in my function.
 - In my view, it's just simpler and cleaner to keep things down to a single input. This will be harder to see in the simple example that I'm going to present next, but I've found that it can make a big difference with complicated functions that have a lot of nesting (i.e. functions of functions) and/or parallelization.
 
 Those justifications aside, let's see how this might work with an example. Consider the following function:
@@ -532,7 +532,7 @@ There are three conceptual steps to the above code chunk:
 
 Let's test that it worked using two different input data frames.
 
-```{r multi_map2a, dependson=multi_func}
+```{r multi_map2a, dependson=multi_func, dependson=parent_func}
 ## Case 1: Iterate over x=1:5 and y=6:10
 input_df1 <- tibble(x=1:5, y=6:10)
 parent_func(input_df1)
@@ -549,6 +549,6 @@ parent_func(input_df2)
 In the next two lectures, we'll dive into more advanced programming and function topics (debugging, parallel implementation, etc.). However, I hope that today has given you solid grasp of the fundamentals. I highly encourage you to start writing some of your own functions. You will be doing this a *lot* as your career progresses. Establishing an early mastery of function writing will put you on the road to awesome data science success<sup>TM</sup>. Here are some additional resources for both inspiration and reference:
 
 - Garrett Grolemund and Hadley Wickham's [*<b>R for Data Science</b>*](http://r4ds.had.co.nz) book --- esp. chapters [19 ("Functions)")](http://r4ds.had.co.nz/functions.html) and [21 ("Iteration)")](http://r4ds.had.co.nz/iteration.html) --- covers much of the same ground as we have here, with particular emphasis on the **purrr** package for iteration.
-- If you're looking for an in-depth treatment, then I can highly recommend Hadley's [*<b>Advanced R</b>*](https://adv-r.hadley.nz) (2nd ed.) He provides a detailed yet readable overview of all the concepts that we touched on today, including more on his (and R's) philospohy regarding functional programming (see [Section ||](https://adv-r.hadley.nz/fp.html)). 
+- If you're looking for an in-depth treatment, then I can highly recommend Hadley's [*<b>Advanced R</b>*](https://adv-r.hadley.nz) (2nd ed.) He provides a detailed yet readable overview of all the concepts that we touched on today, including more on his (and R's) philosophy regarding functional programming (see [Section ||](https://adv-r.hadley.nz/fp.html)). 
 - If you're in the market for a more concise overview of the different `*apply()` functions, then I recommend [this blog post](https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/) by Neil Saunders.
 - On the other end of the scale, Jenny Bryan (all hail) has created a fairly epic [purrr tutorial](https://jennybc.github.io/purrr-tutorial) mini-website. (Bonus: She goes into more depth about working with lists and list columns.)
