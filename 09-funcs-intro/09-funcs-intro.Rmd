@@ -397,9 +397,11 @@ Or,
 lapply(c(1, 5, 26, 3), num_to_alpha) %>% bind_rows()
 ```
 
-#### Progress bars with the **pbapply** package!
+#### Progress bars!
 
-I'm a big fan of the [**pbapply**](https://github.com/psolymos/pbapply) package, which is a lightweight wrapper around the `*apply` functions that adds a progress bar. And who doesn't like progress bars? Personally, I find it incredibly helpful to see how a function is progressing, or get a sense of how much longer I can expect to wait before completion. `pbapply` offers versions for all of the `*apply` family, but the one that I use the most is (unsuprisingly) `pbapply::pblapply()`. 
+Who doesn't like progress bars? Personally, I find it incredibly helpful to see how a function is progressing, or get a sense of how much longer I can expect to wait before completion.
+
+Along those lines, I'm a big fan of the [**pbapply**](https://github.com/psolymos/pbapply) package, which is a lightweight wrapper around the `*apply` functions that adds a progress bar. `pbapply` offers versions for all of the `*apply` family, but the one that I use the most is (unsurprisingly) `pbapply::pblapply()`. 
 
 *Note: You will need to run this next example interactively to see the effect properly.*
 
@@ -415,6 +417,8 @@ pblapply(1:10, function(i) {
 ```
 
 Another thing that I really like about the `pblapply()` function is that it allows for easy implementation of parallel (i.e. multicore) processing that works across operating systems. We'll cover this next week, though.
+
+There's also a newish package on the scene, [**progressr**](https://github.com/HenrikBengtsson/progressr), which provides a unified API for progress updates across multiple iteration frameworks in R. I won't cover it here, but it's pretty neat and simple to use, so check it out.
 
 ### 2) purrr package
 
