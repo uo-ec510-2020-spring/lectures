@@ -2011,8 +2011,10 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <div id="purrr-package" class="section level4">
 <h4>2) purrr package</h4>
 <p>The tidyverse offers its own enhanced implementation of the base <code>*apply()</code> functions through the <a href="https://purrr.tidyverse.org/"><strong>purrr</strong></a> package.<a href="#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> The key function to remember here is <code>purrr::map()</code>. And, indeed, the syntax and output of this command are effectively identical to <code>base::lapply()</code>:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># lapply(1:10, num_to_alpha) ## lapply version from earlier</span></span>
-<span id="cb65-2"><a href="#cb65-2"></a><span class="kw">map</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, num_to_alpha)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a><span class="kw">map</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="cf">function</span>(i) { <span class="co">## only need to swap `lapply` for `map`</span></span>
+<span id="cb65-2"><a href="#cb65-2"></a>  df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">num =</span> i, <span class="dt">let =</span> LETTERS[i])</span>
+<span id="cb65-3"><a href="#cb65-3"></a>  <span class="kw">return</span>(df)</span>
+<span id="cb65-4"><a href="#cb65-4"></a>  })</span></code></pre></div>
 <pre><code>## [[1]]
 ## # A tibble: 1 x 2
 ##     num let  
@@ -2073,8 +2075,10 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 ##   &lt;int&gt; &lt;chr&gt;
 ## 1    10 J</code></pre>
 <p>Given these similarities, I won’t spend much time on <strong>purrr</strong>. Although, I do think it will be the optimal entry point for many you when it comes to programming and iteration. You have already learned the syntax, so it should be very easy to switch over. However, one additional thing I wanted to flag for today is that <code>map()</code> also comes with its own variants, which are useful for returning objects of a desired type. For example, we can use <code>purrr::map_df()</code> to return a data frame.</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="co"># lapply(1:10, num_to_alpha) %&gt;% bind_rows() ## lapply version from earlier.</span></span>
-<span id="cb67-2"><a href="#cb67-2"></a><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, num_to_alpha)</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="cf">function</span>(i) { <span class="co">## don&#39;t need bind_rows with `map_df`</span></span>
+<span id="cb67-2"><a href="#cb67-2"></a>  df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">num =</span> i, <span class="dt">let =</span> LETTERS[i])</span>
+<span id="cb67-3"><a href="#cb67-3"></a>  <span class="kw">return</span>(df)</span>
+<span id="cb67-4"><a href="#cb67-4"></a>  })</span></code></pre></div>
 <pre><code>## # A tibble: 10 x 2
 ##      num let  
 ##    &lt;int&gt; &lt;chr&gt;
@@ -2115,8 +2119,8 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 ##  8     8 H    
 ##  9     9 I    
 ## 10    10 J</code></pre>
-<p>Or,</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a><span class="kw">lapply</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">26</span>, <span class="dv">3</span>), num_to_alpha) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">bind_rows</span>()</span></code></pre></div>
+<p>Or, say</p>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a><span class="kw">map_df</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">26</span>, <span class="dv">3</span>), num_to_alpha)</span></code></pre></div>
 <pre><code>## # A tibble: 4 x 2
 ##     num let  
 ##   &lt;dbl&gt; &lt;chr&gt;

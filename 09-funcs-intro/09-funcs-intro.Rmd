@@ -446,15 +446,19 @@ There's also a newish package on the scene, [**progressr**](https://github.com/H
 The tidyverse offers its own enhanced implementation of the base `*apply()` functions through the [**purrr**](https://purrr.tidyverse.org/) package.^[In their [words](https://r4ds.had.co.nz/iteration.html): "The apply family of functions in base R solve a similar problem *[i.e. to purrr]*, but purrr is more consistent and thus is easier to learn."] The key function to remember here is `purrr::map()`. And, indeed, the syntax and output of this command are effectively identical to `base::lapply()`:
 
 ```{r map}
-# lapply(1:10, num_to_alpha) ## lapply version from earlier
-map(1:10, num_to_alpha)
+map(1:10, function(i) { ## only need to swap `lapply` for `map`
+  df <- tibble(num = i, let = LETTERS[i])
+  return(df)
+  })
 ```
 
 Given these similarities, I won't spend much time on **purrr**. Although, I do think it will be the optimal entry point for many you when it comes to programming and iteration. You have already learned the syntax, so it should be very easy to switch over. However, one additional thing I wanted to flag for today is that `map()` also comes with its own variants, which are useful for returning objects of a desired type. For example, we can use `purrr::map_df()` to return a data frame.
 
 ```{r map_df}
-# lapply(1:10, num_to_alpha) %>% bind_rows() ## lapply version from earlier.
-map_df(1:10, num_to_alpha)
+map_df(1:10, function(i) { ## don't need bind_rows with `map_df`
+  df <- tibble(num = i, let = LETTERS[i])
+  return(df)
+  })
 ```
 
 Note that this is more efficient (i.e. involves less typing) than the `lapply()` version, since we don't have to go through the extra step of binding rows at the end.
@@ -477,9 +481,9 @@ Now, we can easily iterate over our function using different input values. For e
 ```{r num_to_alpha_ex1}
 lapply(1:10, num_to_alpha) %>% bind_rows()
 ```
-Or,
+Or, say
 ```{r num_to_alpha_ex2}
-lapply(c(1, 5, 26, 3), num_to_alpha) %>% bind_rows()
+map_df(c(1, 5, 26, 3), num_to_alpha)
 ```
 
 ### Iterate over multiple inputs
