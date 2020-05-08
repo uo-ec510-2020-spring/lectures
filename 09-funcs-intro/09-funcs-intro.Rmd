@@ -526,7 +526,7 @@ First, `base::mapply()`:
 ## mapply is based on sapply, so we also have to tell it not to simplify if we want to keep the list structure.
 mapply(
   multi_func,
-  1:5, ## Our "x" vector input
+  x=1:5, ## Our "x" vector input
   y=6:10, ## Our "y" vector input
   SIMPLIFY = F ## Tell it not to simplify to keep the list structure
   ) %>%

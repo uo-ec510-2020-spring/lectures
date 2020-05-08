@@ -2161,7 +2161,7 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb77-2"><a href="#cb77-2"></a><span class="co">## mapply is based on sapply, so we also have to tell it not to simplify if we want to keep the list structure.</span></span>
 <span id="cb77-3"><a href="#cb77-3"></a><span class="kw">mapply</span>(</span>
 <span id="cb77-4"><a href="#cb77-4"></a>  multi_func,</span>
-<span id="cb77-5"><a href="#cb77-5"></a>  <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="co">## Our &quot;x&quot; vector input</span></span>
+<span id="cb77-5"><a href="#cb77-5"></a>  <span class="dt">x=</span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="co">## Our &quot;x&quot; vector input</span></span>
 <span id="cb77-6"><a href="#cb77-6"></a>  <span class="dt">y=</span><span class="dv">6</span><span class="op">:</span><span class="dv">10</span>, <span class="co">## Our &quot;y&quot; vector input</span></span>
 <span id="cb77-7"><a href="#cb77-7"></a>  <span class="dt">SIMPLIFY =</span> F <span class="co">## Tell it not to simplify to keep the list structure</span></span>
 <span id="cb77-8"><a href="#cb77-8"></a>  ) <span class="op">%&gt;%</span></span>
