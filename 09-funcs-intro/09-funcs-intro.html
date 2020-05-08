@@ -2261,6 +2261,11 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <li>If you’re in the market for a more concise overview of the different <code>*apply()</code> functions, then I recommend <a href="https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/">this blog post</a> by Neil Saunders.</li>
 <li>On the other end of the scale, Jenny Bryan (all hail) has created a fairly epic <a href="https://jennybc.github.io/purrr-tutorial">purrr tutorial</a> mini-website. (Bonus: She goes into more depth about working with lists and list columns.)</li>
 </ul>
+<div id="bonus-accessing-function-source-code" class="section level3">
+<h3>Bonus: Accessing function source code</h3>
+<p>Looking inside a function is not only important for debugging (i.e. a subject for our next lecture), but it’s also a great way to pick up programming tips and tricks. We refer to this as accessing a function’s <em>source code</em>. For simple functions, accessing the source is a mere matter of typing the function name into your R console (without parentheses) and letting R print the object to screen. Try this yourself with the <code>num_to_alpha</code> function that we created earlier, or, say, <code>dplyr::bind_rows</code>.</p>
+<p>Unfortunately, the simple print-function-to-screen approach doesn’t work once you start getting into functions that have different dispatch methods (e.g. associated with S3 or S4 classes), or rely on compiled code underneath the hood (e.g. written in C or Fortran). The good news is that you can still view the source code, even if that sometimes requires a bit more legwork. See Joshua Ulrich’s StackOverflow Q/A <a href="https://stackoverflow.com/a/19226817/4115816">here</a>, or Jenny Bryan’s summary <a href="https://github.com/jennybc/access-r-source">here</a>. Lastly, Jim Hester’s <a href="https://github.com/jimhester/lookup"><strong>lookup</strong></a> package can do all of the legwork for you if don’t feel like dealing with any complications.</p>
+</div>
 </div>
 <div class="footnotes">
 <hr />
