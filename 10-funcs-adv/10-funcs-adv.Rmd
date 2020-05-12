@@ -315,7 +315,7 @@ system.time(
 )
 ```
 
-And does it ever! We're down to a fraction of a second, since we didn't need to run at all again. Rather, we simply recalled the previously saved (i.e. memoised) results. And just to prove that we're really saving meaningful output, here is a comparison of the two data frames, as well as the printed output of `df2`.
+And does it ever! We're down to a fraction of a second, since we didn't need to run at all again. Rather, we simply recalled the previously saved (i.e. memoised) results. And just to prove that we're really saving meaningful output, here is a comparison of the two data frames, as well as the printed output of `m2`.
 
 ```{r m1_v_m2, dependson=m1, dependson=m2}
 all.equal(m1, m2)

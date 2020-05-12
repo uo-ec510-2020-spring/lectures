@@ -1853,7 +1853,7 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb41-3"><a href="#cb41-3"></a>)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
 ##   0.003   0.000   0.003</code></pre>
-<p>And does it ever! We’re down to a fraction of a second, since we didn’t need to run at all again. Rather, we simply recalled the previously saved (i.e. memoised) results. And just to prove that we’re really saving meaningful output, here is a comparison of the two data frames, as well as the printed output of <code>df2</code>.</p>
+<p>And does it ever! We’re down to a fraction of a second, since we didn’t need to run at all again. Rather, we simply recalled the previously saved (i.e. memoised) results. And just to prove that we’re really saving meaningful output, here is a comparison of the two data frames, as well as the printed output of <code>m2</code>.</p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="kw">all.equal</span>(m1, m2)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>m2</span></code></pre></div>
@@ -1920,18 +1920,18 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="kw">system.time</span>(</span>
 <span id="cb53-2"><a href="#cb53-2"></a>  m5 &lt;-<span class="st"> </span><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, mem_square_verbose)</span>
 <span id="cb53-3"><a href="#cb53-3"></a>)</span></code></pre></div>
-<pre><code>## Loading cached data for x = 1 
-## Loading cached data for x = 2 
-## Loading cached data for x = 3 
-## Loading cached data for x = 4 
-## Loading cached data for x = 5 
-## Loading cached data for x = 6 
-## Loading cached data for x = 7 
-## Loading cached data for x = 8 
-## Loading cached data for x = 9 
-## Loading cached data for x = 10</code></pre>
+<pre><code>## Generating data from scratch for x = 1 ...ok
+## Generating data from scratch for x = 2 ...ok
+## Generating data from scratch for x = 3 ...ok
+## Generating data from scratch for x = 4 ...ok
+## Generating data from scratch for x = 5 ...ok
+## Generating data from scratch for x = 6 ...ok
+## Generating data from scratch for x = 7 ...ok
+## Generating data from scratch for x = 8 ...ok
+## Generating data from scratch for x = 9 ...ok
+## Generating data from scratch for x = 10 ...ok</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.012   0.000   0.012</code></pre>
+##   0.132   0.013  20.164</code></pre>
 </div>
 </div>
 <div id="further-resources" class="section level2">
