@@ -1846,13 +1846,13 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb39-2"><a href="#cb39-2"></a>  m1 &lt;-<span class="st"> </span><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, mem_square)</span>
 <span id="cb39-3"><a href="#cb39-3"></a>)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.119   0.000  20.136</code></pre>
+##   0.077   0.001  20.096</code></pre>
 <p>As expected this took 20 seconds because of the enforced two second wait during each iteration. Now, we try calling the function a second time — iterating over the exact same inputs and saving to a new <code>m2</code> object — to see if caching makes a difference…</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="kw">system.time</span>(</span>
 <span id="cb41-2"><a href="#cb41-2"></a>  m2 &lt;-<span class="st"> </span><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, mem_square)</span>
 <span id="cb41-3"><a href="#cb41-3"></a>)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.003   0.000   0.003</code></pre>
+##   0.004   0.000   0.004</code></pre>
 <p>And does it ever! We’re down to a fraction of a second, since we didn’t need to run at all again. Rather, we simply recalled the previously saved (i.e. memoised) results. And just to prove that we’re really saving meaningful output, here is a comparison of the two data frames, as well as the printed output of <code>m2</code>.</p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="kw">all.equal</span>(m1, m2)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
@@ -1875,7 +1875,7 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb47-2"><a href="#cb47-2"></a>  m3 &lt;-<span class="st"> </span><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">15</span>, mem_square)</span>
 <span id="cb47-3"><a href="#cb47-3"></a>)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.024   0.000  10.036</code></pre>
+##   0.027   0.000  10.036</code></pre>
 <p>As expected, this only took (5 <span class="math inline">\(\times\)</span> 2 = ) 10 seconds to generate the new results from scratch, with the previous results being called up from the cache. You can think of preceding example as approximating a real-life scenario, where your program crashes or halts midway through its run, yet you don’t need to restart all the way at the beginning. These kinds of interuptions happen more frequently than you might expect, especially if you’re working with complex analyses and high-performance computing tools (e.g. preemptible nodes or VM instances). Being smart about caching has saved me <em>many</em> lost hours and it could do the same for you.</p>
 <div id="aside-1-caching-across-r-sessions" class="section level3">
 <h3>Aside 1: Caching across R sessions</h3>
@@ -1889,8 +1889,8 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <p>Run our new memoised function and check that it saved the cached output to the specified directory.</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>m4 &lt;-<span class="st"> </span><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">7</span>, mem_square_persistent)</span>
 <span id="cb50-2"><a href="#cb50-2"></a><span class="kw">list.files</span>(cache_dir)</span></code></pre></div>
-<pre><code>## [1] &quot;11aa9cca199eab65&quot; &quot;62846f7b2a226372&quot; &quot;67348935995c67ca&quot; &quot;8f0b592b7389ebab&quot;
-## [5] &quot;dd10721453a9ae79&quot; &quot;e8a996320aefeaac&quot; &quot;ed69dd730ff5b4cb&quot;</code></pre>
+<pre><code>## [1] &quot;0f028a42906052bd&quot; &quot;1b75b50cd005fb3f&quot; &quot;29cae582fe3b8d93&quot; &quot;620b2f341c179228&quot;
+## [5] &quot;a8920783b312ca5e&quot; &quot;c53cccdd041a3ed7&quot; &quot;e191bf64c3799dd0&quot;</code></pre>
 <p><strong>Bottom line:</strong> Specify a dedicated cache directory for complex or time-consuming analyses that you want to be able to access across R sessions.</p>
 </div>
 <div id="aside-2-verbose-output" class="section level3">
@@ -1920,18 +1920,18 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="kw">system.time</span>(</span>
 <span id="cb53-2"><a href="#cb53-2"></a>  m5 &lt;-<span class="st"> </span><span class="kw">map_df</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, mem_square_verbose)</span>
 <span id="cb53-3"><a href="#cb53-3"></a>)</span></code></pre></div>
-<pre><code>## Generating data from scratch for x = 1 ...ok
-## Generating data from scratch for x = 2 ...ok
-## Generating data from scratch for x = 3 ...ok
-## Generating data from scratch for x = 4 ...ok
-## Generating data from scratch for x = 5 ...ok
-## Generating data from scratch for x = 6 ...ok
-## Generating data from scratch for x = 7 ...ok
+<pre><code>## Loading cached data for x = 1 
+## Loading cached data for x = 2 
+## Loading cached data for x = 3 
+## Loading cached data for x = 4 
+## Loading cached data for x = 5 
+## Loading cached data for x = 6 
+## Loading cached data for x = 7 
 ## Generating data from scratch for x = 8 ...ok
 ## Generating data from scratch for x = 9 ...ok
 ## Generating data from scratch for x = 10 ...ok</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.132   0.013  20.164</code></pre>
+##   0.022   0.003   6.031</code></pre>
 </div>
 </div>
 <div id="further-resources" class="section level2">
