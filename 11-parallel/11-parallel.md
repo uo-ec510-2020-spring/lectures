@@ -159,8 +159,7 @@ toc()
 
 How easy was that? We hardly had to change our original code and didn't have to pay a cent for all that extra performance.^[Not to flog a dead horse, but as I pointed out in the very [first lecture](https://raw.githack.com/uo-ec607/lectures/master/01-intro/01-Intro.html#26) of this course: Have you seen the price of a [Stata/MP](https://www.stata.com/statamp/) license recently? Not to mention the fact that you effectively pay *per* core...] Congratulate yourself on already being such an expert at parallel programming.
 
-<div align="center"><iframe src="https://giphy.com/embed/ujGfBmVppmgEg" width="480" height="359" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></p></div>
-</br>
+![](pics/liz-high-five.gif)
 
 ## Example 2
 

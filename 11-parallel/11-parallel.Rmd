@@ -79,7 +79,7 @@ plan(multiprocess)
 
 ## Prologue
 
-A few lectures back, we talked about the huge difference that some relatively new packages have made to spatial analysis in R. Complex spatial operations that previously necessitated equally complex spatial objects have been superseded by much simpler and more intuitive tools. If that wasn't good enough, these new tools are also faster. We are going to see something very similar today. Parallel programming is a big and complex topic, with many potential pitfalls. However, software innovations and some amazing new(ish) packages have made it *much* easier and safer to program in parallel.^[I should emphasise that the R-core team has provided excellent support for parallel programming for over a decade. But there's no question in my mind that the barriers to entry have recently been lowered.] 
+Parallel programming is a big and complex topic, with many potential pitfalls. However, software innovations and some amazing new(ish) packages have made it really easy to run parallel code in R.^[I should emphasise that the R-core team has provided excellent support for parallel programming for over a decade. But there's no question in my mind that the barriers to entry have recently been lowered.] 
 
 With that in mind, I'm going to structure today's lecture back-to-front. In particular, I'm going to start with some motivating examples. My primary goal is to demonstrate both the ease and immediate payoff of "going parallel". Only after convincing you of these facts will we get into some of the technical details that were abstracted away behind the scenes. The latter part of the lecture will go over parallel programming in more general terms (i.e. not R-specific) and highlight potential pitfalls that you should be aware of.
 
@@ -155,8 +155,7 @@ toc()
 
 How easy was that? We hardly had to change our original code and didn't have to pay a cent for all that extra performance.^[Not to flog a dead horse, but as I pointed out in the very [first lecture](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/01-intro/01-intro.html#39) of this course: Have you seen the price of a [Stata/MP](https://www.stata.com/statamp/) license recently? Not to mention the fact that you effectively pay *per* core...] Congratulate yourself on already being such an expert at parallel programming.
 
-<div align="center"><iframe src="https://giphy.com/embed/ujGfBmVppmgEg" width="480" height="359" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></p></div>
-</br>
+![](pics/liz-high-five.gif)
 
 ## Example 2
 
