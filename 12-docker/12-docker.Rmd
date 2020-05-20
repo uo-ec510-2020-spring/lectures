@@ -50,12 +50,14 @@ knit_hooks$set(
 
 1. [Prologue](#prologue)
 
-2. [Examples](#examples)
+2. [Docker 101](#intro)
+
+3. [Examples](#examples)
   
   - [Base R](#r-base)
   - [RStudio+](#rstudio+)
 
-3. [Sharing files with a container](#share)
+4. [Sharing files with a container](#share)
 
 ---
 class: inverse, center, middle
@@ -83,6 +85,80 @@ name: prologue
 </br>
 
 **Note:** These lecture slides are mostly intended as a companion to the [Rocker Wiki](https://github.com/rocker-org/rocker/wiki) and the [ROpenSci Docker tutorial](https://ropenscilabs.github.io/r-docker-tutorial/). Use them as a quick-start reference for common Docker commands.
+
+---
+class: inverse, center, middle
+name: intro
+
+# Docker 101
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# What is a container?
+
+Have you ever:
+
+- Tried to install a program or run someone else's code, only to be confronted by a bunch of error messages?
+- Shared your code and data with someone else, only for them to be confronted by error messages?
+- Re-run your analyses after a major package update, only to find that the code now longer works or the results have changed?
+
+--
+
+Containers are way to solve these (and many other) problems.
+
+--
+
+### Docker
+
+[Docker](https://www.docker.com/) is by far the most widely used and best supported container technology.
+- Certainly true for the types of problems that we are concerned with in this course.
+- So, while there are container platforms around, when I talk about "containers" in this lecture, I'm really talking about Docker. 
+
+---
+
+# Why do we care?
+
+I've already prompted some of the main reasons on the previous slide. But to sum things up with two ideas:
+
+### 1. Reproducibility
+
+If we can bundle our code and software in a Docker container, then we don't have to worry about it not working on someone else's system (and vice versa). Similarly, we don't have to worry about it not working on our own systems in the future (e.g. after package or program updates).
+
+### 2. Deployment
+
+Many deployment scenarios, but of particular interest to this course: When you start working with big data pipelines you want to be able to deploy software quickly and reliably. Need to run some code up on the cloud? Save time and installation headaches by running it through a suitable container (which can easily be deployed to a cluster of machines).
+
+---
+
+# The analogy
+
+You know those big shipping containers used to transport physical goods?
+
+.pull-left[
+![](http://www.pangeacontainers.nl/wp-content/uploads/2015/08/containerschip2.jpg)
+]
+
+.pull-right[
+![](https://4.bp.blogspot.com/-nV4EifcZH5c/T6BuSJpke3I/AAAAAAAAQT8/IcqQ4rrrlBA/s1600/40Ft+Shipping+container+on+semi.jpg)
+]
+
+They provide a standard format that can accommodate all manner of goods (TVs, fresh produce, whatever). Not only that, but they are stackable and can easily be switched between different modes of transport (ship, road, rail).
+
+--
+
+Docker containers are the software equivalent. 
+- physical goods <-> software
+- transport modes <-> operating systems
+- etc.
+
+---
+
+# The big idea
+
+![Credit: [Julia Evans](https://twitter.com/b0rk/status/1237464479811633154)](https://pbs.twimg.com/media/ESxbX5IXkAE10N2?format=jpg)
+
+.pull-right[*Credit: [Julia Evans](https://twitter.com/b0rk/status/1237464479811633154). (Buy the [zine](https://wizardzines.com/zines/containers/)!)*]
 
 ---
 class: inverse, center, middle
