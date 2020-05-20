@@ -82,12 +82,6 @@ name: prologue
   - [Windows 10 Home](https://docs.docker.com/docker-for-windows/install-windows-home/)
   - [Windows 7 / 8](https://docs.docker.com/toolbox/toolbox_install_windows/)
 
---
-
-</br>
-
-**Note:** These lecture slides are mostly intended as a companion to the [Rocker Wiki](https://github.com/rocker-org/rocker/wiki) and the [ROpenSci Docker tutorial](https://ropenscilabs.github.io/r-docker-tutorial/). Use them as a quick-start reference for common Docker commands.
-
 ---
 class: inverse, center, middle
 name: intro
