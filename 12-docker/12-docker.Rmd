@@ -431,9 +431,7 @@ The coolproject directory is now available from RStudio running on the container
 
 # Choosing the RHS mount point
 
-In the previous example, I specified the RHS mount point as `/home/rstudio/coolproject`.
-
-How did I know this would work?
+In the previous example, I specified the RHS mount point as `/home/rstudio/coolproject`. How did I know this would work?
 
 --
 
@@ -442,31 +440,36 @@ The short answer is that `/home/rstudio` is the default user's home directory fo
 
 --
 
-OTOH, the `/coolproject` directory name is entirely optional. You could call it anything you want. Giving it the same name as the directory on your computer obviously helps to avoid confusion, though.
-- Similarly, nothing is stopping you from adding a couple of parent directories. I could have used `-v /home/grant/coolproject:/home/rstudio/parentdir/coolproject` and it would have worked fine.
+We have to be be specific about mounting under the user's home directory, because RStudio Server limits how and where users can access files. (This is a security feature that we'll revisit in the next lecture on cloud computing.)
+
+--
+
+OTOH the `/coolproject` directory name is entirely optional. Call it whatever you want... though using the same name as the linked computer directory obviously avoids confusion.
+- Similarly, you're free to add a couple of parent directories. I could have used `-v /home/grant/coolproject:/home/rstudio/parentdir1/parentdir2/coolproject` and it would have worked fine.
 
 ---
 
 # Choosing the RHS mount point (cont.)
 
-So, the RHS mount point for RStudio+ containers is (almost) always `/home/rstudio`.
+Choosing a specific RHS mount point is less important for non-RStudio+ containers.
 
-What about other containers?
- - E.g. For r-base containers there's no "rstudio" user so the above definitely won't work. (Fun fact: When you run an r-base container you are actually logged in as root.)
+
+Still, be aware that the `/home/rstudio` path won't work for our r-base container from earlier.
+- Reason: There's no "rstudio" user. (Fun fact: When you run an r-base container you are actually logged in as root.)
 
 --
 
-In truth, the specific RHS mount point is less important for non-RStudio+ containers.<sup>1</sup> Still, I recommend a general strategy of mounting external volumes on the dedicated `/mnt` directory that is standard on Linux.<sup>2</sup> For example:
+For non-Rstudio+ containers, I recommend a general strategy of mounting external volumes on the dedicated `/mnt` directory that is standard on Linux.<sup>1</sup> For example:
 
-```{bash}
-docker run -it --rm -v /home/grant/coolproject:/mnt/coolproject r-base
+```
+$ docker run -it --rm -v /home/grant/coolproject:/mnt/coolproject r-base /bin/bash
+root@958d28472eb0:/# cd /mnt/coolproject/ 
+root@958d28472eb0:/mnt/coolproject# R
 ```
 
 
 .footnote[
-<sup>1</sup> It only really matters for the first group because RStudio Server limits how and where users can access files. This is a security feature we'll revisit in the next lecture on cloud computing.
-
-<sup>2</sup> Remember, Docker images are basically just miniaturized, portable Linux OSs.
+<sup>1</sup> Remember, Docker images are basically just miniaturized, portable Linux OSs.
 ]
 
 
