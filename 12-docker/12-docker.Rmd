@@ -59,6 +59,8 @@ knit_hooks$set(
 
 4. [Sharing files with a container](#share)
 
+5. [Next steps](#next)
+
 ---
 class: inverse, center, middle
 name: prologue
@@ -75,7 +77,7 @@ name: prologue
 
 - [Mac](https://docs.docker.com/docker-for-mac/install/)
 
-- Windows (varies by version)
+- Windows (install varies by version)
   - [Windows 10 Pro / Education / Enterprise](https://docs.docker.com/docker-for-windows/install/)
   - [Windows 10 Home](https://docs.docker.com/docker-for-windows/install-windows-home/)
   - [Windows 7 / 8](https://docs.docker.com/toolbox/toolbox_install_windows/)
@@ -97,11 +99,11 @@ name: intro
 
 # What is a container?
 
-Have you ever:
+Have you ever...
 
-- Tried to install a program or run someone else's code, only to be confronted by a bunch of error messages?
-- Shared your code and data with someone else, only for them to be confronted by error messages?
-- Re-run your analyses after a major package update, only to find that the code now longer works or the results have changed?
+- tried to install a program or run someone else's code, only to be confronted by a bunch of error messages?
+- shared your code and data with someone else, only for them to be confronted by error messages?
+- re-run your own analyses after a major package update, only to find that the code no longer works or the results have changed?
 
 --
 
@@ -111,9 +113,9 @@ Containers are way to solve these (and many other) problems.
 
 ### Docker
 
-[Docker](https://www.docker.com/) is by far the most widely used and best supported container technology.
+By far the most widely used and best supported container technology.
 - Certainly true for the types of problems that we are concerned with in this course.
-- So, while there are container platforms around, when I talk about "containers" in this lecture, I'm really talking about Docker. 
+- So, while there are other container platforms around, when I talk about "containers" in this lecture, I'm really talking about [Docker](https://www.docker.com/). 
 
 ---
 
@@ -127,7 +129,7 @@ If we can bundle our code and software in a Docker container, then we don't have
 
 ### 2. Deployment
 
-Many deployment scenarios, but of particular interest to this course: When you start working with big data pipelines you want to be able to deploy software quickly and reliably. Need to run some code up on the cloud? Save time and installation headaches by running it through a suitable container (which can easily be deployed to a cluster of machines).
+There are many deployment scenarios (packaging, testing, etc.). Of particular interest to this course are big data pipelines where you want to deploy software quickly and reliably. Need to run some time-consuming code up on the cloud? Save time and installation headaches by running it through a suitable container, which can easily be deployed to a cluster of machines too.
 
 ---
 
@@ -154,11 +156,62 @@ Docker containers are the software equivalent.
 
 ---
 
+# How it works
+
+1. Start off with a stripped-down version of an operating system. Usually a Linux distro like Ubuntu.
+
+2. Install _all_ of the programs and dependencies that are needed to run your code.
+
+3. (Add any extra configurations you want.)
+
+4. Package everything up as a [tarball](https://en.wikipedia.org/wiki/Tar_%28computing%29).<sup>*</sup>
+
+.footnote[
+<sup>*</sup> A format for storing a bunch of files as a single object. Can also be compressed to save space.
+]
+
+--
+
+</br>
+
+**Summary:** Containers are like mini, portable operating systems that contain everything needed to run some piece of software (but nothing more!). 
+
+---
+
 # The big idea
 
 ![Credit: [Julia Evans](https://twitter.com/b0rk/status/1237464479811633154)](https://pbs.twimg.com/media/ESxbX5IXkAE10N2?format=jpg)
 
 .pull-right[*Credit: [Julia Evans](https://twitter.com/b0rk/status/1237464479811633154). (Buy the [zine](https://wizardzines.com/zines/containers/)!)*]
+
+---
+
+# Quick terminology clarification
+
+*Image* ~ This is (basically) the tarball that we talked about on the previous two slides. It's a set of layers and instructions for building a container.
+
+*Container* ~ A container is a running instance of an image. You can have many containers (i.e. running instances) of the same image.
+
+--
+
+</br>
+
+**Analogy:** Think of the image as the recipe and the container as the cake. You can use the recipe to make many versions of the same cake (even if you only ever plan to make one). And you can share the recipe with others to make their own cake.
+
+---
+
+# Rocker = R + Docker
+
+It should now be clear that Docker is targeted at (and used by) a bewildering array of software applications.
+
+In the realm of economics and data science, that includes every major open-source programming language and software stack.<sup>1</sup> For example, you could download and run a [Julia container](https://hub.docker.com/_/julia/) right now if you so wished.
+
+But for this course, we are primarily concerned with Docker images that bundle R applications.
+
+The good news is that R has outstanding Docker support, primarily as a result of the **Rocker Project** ([website](https://github.com/mathworks-ref-arch/matlab-dockerfile) / [GitHub](https://github.com/rocker-org/rocker)).
+- For the rest of today's lecture we will be using images from Rocker (or derivatives).
+
+.footnote[<sup>1</sup> It's *possible* to build a Docker image on top of proprietary software ([example](https://github.com/mathworks-ref-arch/matlab-dockerfile)). But license restrictions and other limitations make this complicated. I hardly ever see it done in the wild.]
 
 ---
 class: inverse, center, middle
@@ -351,7 +404,7 @@ name: share
 
 # Share files by mounting volumes
 
-Each container runs in a sandboxed environment and cannot access the files and directories on your computer unless you give it explicit permission.
+Each container runs in a sandboxed environment and cannot access other files and directories on your computer unless you give it explicit permission.
 
 To share files with a container, the `-v` (mount volume) flag is your friend. 
 - Adopts a `LHS:RHS` convention, where `LHS` = `path/on/your/computer/` and `RHS` = `path/on/the/container`.
@@ -422,6 +475,13 @@ docker run -it --rm -v /home/grant/coolproject:/mnt/coolproject r-base
 <sup>2</sup> Remember, Docker images are basically just miniaturized, portable Linux OSs.
 ]
 
+
+---
+class: inverse, center, middle
+name: next
+
+# Next steps
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 ---
 
