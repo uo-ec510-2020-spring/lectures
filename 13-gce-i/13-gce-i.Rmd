@@ -6,14 +6,6 @@ author:
   affiliation: University of Oregon | [EC 510](https://github.com/uo-ec510-2020-spring/lectures)
 # date: Lecture 13  #"`r format(Sys.time(), '%d %B %Y')`"
 output: 
-  pdf_document:
-    latex_engine: xelatex
-    toc: true
-    dev: cairo_pdf
-    fig_width: 7
-    fig_height: 6
-    pandoc_args:
-        --template=../Pandoc-extras/mytemplate.tex ## http://labrtorian.com/2019/08/26/rmarkdown-template-that-manages-academic-affiliations/
   html_document:
     theme: flatly
     highlight: haddock
@@ -22,6 +14,14 @@ output:
     toc_depth: 4
     toc_float: yes
     keep_md: false
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    dev: cairo_pdf
+    fig_width: 7
+    fig_height: 6
+    pandoc_args:
+        --template=../Pandoc-extras/mytemplate.tex ## http://labrtorian.com/2019/08/26/rmarkdown-template-that-manages-academic-affiliations/
 mainfont: cochineal
 sansfont: Fira Sans
 monofont: Fira Code #Although, see: https://tex.stackexchange.com/q/294362
@@ -129,10 +129,10 @@ Write down the External IP address, as we'll need it for running RStudio Server 
 
 #### Allow RStudio's port (8787) via a firewall rule
 
-RStudio Server runs on port 8787 of an associated IP address. Because Google Cloud by default blocks external traffic on GCE VMs for security reasons, we first need to enable the 8787 port via a [firewall rule](https://cloud.google.com/vpc/docs/firewalls).
+RStudio Server runs on port 8787 of an associated IP address. Because Google Cloud by default blocks external traffic on GCE VMs for security reasons, we first need to enable the 8787 port via a [firewall rule](https://cloud.google.com/vpc/docs/firewalls). The following command creates a firewall rule (which I'm calling "rstudio") that does exactly this.
 
 ```{bash, eval=F, prompt=T}
-gcloud compute firewall-rules create rstudioPort --allow=tcp:8787
+gcloud compute firewall-rules create rstudio --allow=tcp:8787
 ```
 
 Note that these firewall rules work on a per-project basis, so you should only have to create it one it one time. ^[While I don't cover it in this tutorial, anyone looking to install and run [Jupyter Notebooks](http://jupyter.org/) on their VM could simply amend the above command to Jupyter's default port of 8888.]

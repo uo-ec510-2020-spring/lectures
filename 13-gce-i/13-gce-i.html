@@ -1671,8 +1671,8 @@ my-vm  us-west1-a  n1-standard-8               10.138.15.222  34.105.81.92  RUNN
 <p>Write down the External IP address, as we’ll need it for running RStudio Server later.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
 <div id="allow-rstudios-port-8787-via-a-firewall-rule" class="section level4">
 <h4>Allow RStudio’s port (8787) via a firewall rule</h4>
-<p>RStudio Server runs on port 8787 of an associated IP address. Because Google Cloud by default blocks external traffic on GCE VMs for security reasons, we first need to enable the 8787 port via a <a href="https://cloud.google.com/vpc/docs/firewalls">firewall rule</a>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a>$ <span class="ex">gcloud</span> compute firewall-rules create rstudioPort --allow=tcp:8787</span></code></pre></div>
+<p>RStudio Server runs on port 8787 of an associated IP address. Because Google Cloud by default blocks external traffic on GCE VMs for security reasons, we first need to enable the 8787 port via a <a href="https://cloud.google.com/vpc/docs/firewalls">firewall rule</a>. The following command creates a firewall rule (which I’m calling “rstudio”) that does exactly this.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a>$ <span class="ex">gcloud</span> compute firewall-rules create rstudio --allow=tcp:8787</span></code></pre></div>
 <p>Note that these firewall rules work on a per-project basis, so you should only have to create it one it one time. <a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
 </div>
 </div>
