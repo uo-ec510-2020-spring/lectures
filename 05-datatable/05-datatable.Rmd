@@ -839,8 +839,8 @@ Fortunately, the answer is "no". data.table provides a special `.SD` symbol for 
 ```{r sd_cols1}
 starwars_dt[, 
             lapply(.SD, mean, na.rm=T),
-            by = species, 
-            .SDcols = c("height", "mass", "birth_year")] %>% 
+            .SDcols = c("height", "mass", "birth_year"),
+            by = species] %>% 
   head(2) ## Just keep everything on the slide
 ```
 
@@ -852,8 +852,8 @@ count: false
 ```{r sd_cols2}
 starwars_dt[, 
             lapply(.SD, mean, na.rm=T), #<<
-            by = species, 
-            .SDcols = c("height", "mass", "birth_year")] %>%
+            .SDcols = c("height", "mass", "birth_year"),
+            by = species] %>%
   head(2) ## Just keep everything on the slide
 ```
 
@@ -871,8 +871,8 @@ count: false
 ```{r sd_cols3}
 starwars_dt[, 
             lapply(.SD, mean, na.rm=T), 
-            by = species, 
-            .SDcols = c("height", "mass", "birth_year")] %>% #<<
+            .SDcols = c("height", "mass", "birth_year"), #<<
+            by = species] %>%
   head(2) ## Just keep everything on the slide
 ```
 
@@ -892,8 +892,8 @@ count: false
 ```{r sd_cols4}
 starwars_dt[, 
             lapply(.SD, mean, na.rm=T), 
-            by = species, 
-            .SDcols = c("height", "mass", "birth_year")] %>%
+            .SDcols = c("height", "mass", "birth_year"), 
+            by = species] %>%
   head(2) ## Just keep everything on the slide
 ```
 
@@ -911,7 +911,7 @@ P.S. One annoyance I have is that the `.()` syntax doesn't work for `.SDcols`. H
 
 # Efficient subsetting with .SD (cont.)
 
-Just to add: We need only specify `.SDcols` if we want to subset specific parts of the data. 
+Just to add: We need only specify `.SDcols` if we want to subset specific parts of the data. (You can also use shortcuts like `.SDcols = is.numeric` or `.SDcols = patterns('abc')`.)
 
 If we instead want to apply the same function on *all* the variables in our dataset, then `.SD` by itself will suffice. 
 
@@ -1169,8 +1169,8 @@ class: inverse, center, middle
 In the tidyverse lecture, we saw how to reshape data using the tidyr::pivot* functions.
 
 data.table offers its own functions for flexibly reshaping data:
-- `dcast()`: convert wide data to long data
-- `melt()`: convert long data to wide data
+- `melt()`: convert wide data to long data
+- `dcast()`: convert long data to wide data
 
 --
 

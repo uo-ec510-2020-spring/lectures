@@ -984,8 +984,8 @@ Fortunately, the answer is "no". data.table provides a special `.SD` symbol for 
 ```r
 starwars_dt[, 
             lapply(.SD, mean, na.rm=T),
-            by = species, 
-            .SDcols = c("height", "mass", "birth_year")] %&gt;% 
+            .SDcols = c("height", "mass", "birth_year"),
+            by = species] %&gt;% 
   head(2) ## Just keep everything on the slide
 ```
 
@@ -1004,8 +1004,8 @@ count: false
 ```r
 starwars_dt[, 
 *           lapply(.SD, mean, na.rm=T),
-            by = species, 
-            .SDcols = c("height", "mass", "birth_year")] %&gt;%
+            .SDcols = c("height", "mass", "birth_year"),
+            by = species] %&gt;%
   head(2) ## Just keep everything on the slide
 ```
 
@@ -1030,8 +1030,8 @@ count: false
 ```r
 starwars_dt[, 
             lapply(.SD, mean, na.rm=T), 
-            by = species, 
-*           .SDcols = c("height", "mass", "birth_year")] %&gt;%
+*           .SDcols = c("height", "mass", "birth_year"),
+            by = species] %&gt;%
   head(2) ## Just keep everything on the slide
 ```
 
@@ -1058,8 +1058,8 @@ count: false
 ```r
 starwars_dt[, 
             lapply(.SD, mean, na.rm=T), 
-            by = species, 
-            .SDcols = c("height", "mass", "birth_year")] %&gt;%
+            .SDcols = c("height", "mass", "birth_year"), 
+            by = species] %&gt;%
   head(2) ## Just keep everything on the slide
 ```
 
@@ -1083,7 +1083,7 @@ P.S. One annoyance I have is that the `.()` syntax doesn't work for `.SDcols`. H
 
 # Efficient subsetting with .SD (cont.)
 
-Just to add: We need only specify `.SDcols` if we want to subset specific parts of the data. 
+Just to add: We need only specify `.SDcols` if we want to subset specific parts of the data. (You can also use shortcuts like `.SDcols = is.numeric` or `.SDcols = patterns('abc')`.)
 
 If we instead want to apply the same function on *all* the variables in our dataset, then `.SD` by itself will suffice. 
 
@@ -1224,15 +1224,15 @@ microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
 
 
 ```
-## Unit: microseconds
+## Unit: milliseconds
 ##               expr        min         lq       mean     median         uq
-##   collapse_dplyr() 114507.903 118471.268 126757.730 121386.061 129442.557
-##      collapse_dt()   1510.639   1605.432   2050.183   1719.483   1906.047
-##  collapse_dt_key()    846.293    881.082   1252.658   1047.224   1079.106
+##   collapse_dplyr() 119.758747 120.867348 125.285551 123.357620 124.851012
+##      collapse_dt()   1.755909   1.797375   2.243366   1.900814   1.953445
+##  collapse_dt_key()   1.056198   1.119743   1.471999   1.202432   1.313009
 ##         max neval cld
-##  168398.229    10   b
-##    5050.027    10  a 
-##    3324.596    10  a
+##  146.981494    10   b
+##    5.402327    10  a 
+##    3.943881    10  a
 ```
 
 --
@@ -1373,8 +1373,8 @@ class: inverse, center, middle
 In the tidyverse lecture, we saw how to reshape data using the tidyr::pivot* functions.
 
 data.table offers its own functions for flexibly reshaping data:
-- `dcast()`: convert wide data to long data
-- `melt()`: convert long data to wide data
+- `melt()`: convert wide data to long data
+- `dcast()`: convert long data to wide data
 
 --
 
