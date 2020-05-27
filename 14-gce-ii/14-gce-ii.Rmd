@@ -233,7 +233,7 @@ Let's see how this works in practice with another example. We start off in exact
 
 Note that I'm also installing the (default) rocker/r-parallel Docker image on each VM, since this comes preloaded with the future functions that we'll need to paralleize operations on the VMs themselves. Finally, I'm going to use an optional `scheduling` argument that instructs GCE to use cheaper, preemptible instances. This is entirely up to you, of course, but I wanted to show you the option since preemptible instances are ideally suited for this type of problem.
 
-```{r, vms_nested}
+```{r vms_nested}
 vms_nested <- 
   gce_vm_cluster(
     vm_prefix = "nested-cluster",        
@@ -246,8 +246,8 @@ vms_nested <-
 
 Now comes part where we need to tweak our cluster setup. Nesting in the future framework is operationalised by defining a series of so-called [future "topologies"](https://cran.r-project.org/web/packages/future/vignettes/future-3-topologies.html). You can click on the previous link for more details, but the gist is that we define a nested plan of futures using the `plan(list(tweak(...), tweak(...)))` syntax. In this case, we are going to define two topology layers:
 
-- **Topology 1.** The "outer" plan, which tells `future` to use the cluster of three remote VMs.
-- **Topology 2.** The "inner" plan, which tells future to use all eight cores on each VM via the `multiprocess` option. 
+- **Topology 1.** The "outer" plan, which tells `future` to use the cluster of two remote VMs.
+- **Topology 2.** The "inner" plan, which tells future to use all four cores on each VM via the `multiprocess` option. 
 
 ```{r plan_nested, dependson=vms_nested, message=FALSE, results=FALSE}
 plan(list( 
@@ -258,9 +258,9 @@ plan(list(
   ))
 ```
 
-That wasn't too complicated, was it? We are now ready to use our cluster by feeding it a parallel function that can take advange of the nested structure. Here is one potential implementation that seems like it should work. I haven't run it here, however, because there is something that we probably want to fix first. Can you guess what it is? (Try running the command yourself and then examining the output if you aren't sure.) The answer is underneath.
+That wasn't too complicated, was it? We are now ready to use our cluster by feeding it a parallel function that can take advantage of the nested structure. Here is one potential implementation that seems like it should work. I haven't run it here, however, because there is something that we probably want to fix first. Can you guess what it is? (Try running the command yourself and then examining the output if you aren't sure.) The answer is underneath.
 
-```{r, eval=FALSE}
+```{r, cache=FALSE, eval=FALSE}
 ## NOT RUN (Run it yourself to see why it yields the wrong answer)
 
 ## Outer future_lapply() loop over the two VMS
@@ -270,7 +270,7 @@ future_lapply(seq_along(vms_nested), function(v) {
   })
 ```
 
-The problem with the above code is that it will duplicate the exact same 16 iterations on *each* VM, instead of spliting up the job efficiently between them. What we want to do, then, is split the input data into distinct "chunks" for each VM to work on separately. There are various ways to do this chunking, but here's an option that I've borrowed from [StackOverflow](https://stackoverflow.com/a/16275428). I like this function because it uses only base R functions and is robust to complications like unequal chunk lengths and different input types (e.g. factors vs numeric).
+The problem with the above code is that it will duplicate the exact same 16 iterations on *each* VM, instead of splitting up the job efficiently between them. What we want to do, then, is split the input data into distinct "chunks" for each VM to work on separately. There are various ways to do this chunking, but here's an option that I've borrowed from [StackOverflow](https://stackoverflow.com/a/16275428). I like this function because it uses only base R functions and is robust to complications like unequal chunk lengths and different input types (e.g. factors vs numeric).
 
 ```{r chunk_func}
 chunk_func <- function(x, n) split(x, cut(seq_along(x), n, labels = FALSE)) 
@@ -283,7 +283,7 @@ chunk_func <- function(x, n) split(x, cut(seq_along(x), n, labels = FALSE))
 Okay, now we're really ready to make full use our cluster. For this example, I'll even go ahead and run 40 iterations of our `slow_func()` function in total. Note that this would take 200 seconds to run sequentially. Based on the total number of cores available to us in this cluster, we would we hope to drop this computation time to around 25 seconds (i.e. an **8 times speedup**) by running everything in parallel. I've commented the code quite explicitly, so please read carefully to see what's happening. In words, though: first we parallelize over the three VMs; then we chunk the input data so that each VM works on a distinct part of problem; and finally we feed the chunked data to our `slow_func` function where it is run in parallel on each VM.
 
 ```{r future_nested_cluster, dependson=plan_nested, dependson=chunk_func}
-## Input data (vector to be interated over by our function)
+## Input data (vector to be iterated over by our function)
 input_data <- 1:40
 
 tic()

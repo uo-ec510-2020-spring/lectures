@@ -1828,20 +1828,20 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb41-6"><a href="#cb41-6"></a>    <span class="dt">predefined_type =</span> <span class="st">&quot;n1-standard-4&quot;</span>,    <span class="co">## CHANGED: Each VM has four CPUs</span></span>
 <span id="cb41-7"><a href="#cb41-7"></a>    <span class="dt">scheduling =</span> <span class="kw">list</span>(<span class="dt">preemptible =</span> <span class="ot">TRUE</span>) <span class="co">## OPTIONAL: Use cheaper, preemptible machines</span></span>
 <span id="cb41-8"><a href="#cb41-8"></a>    )</span></code></pre></div>
-<pre><code>## 2020-05-26 15:16:05&gt; # Creating cluster with settings: predefined_type = n1-standard-4, scheduling = list(preemptible = TRUE), template = r-base, dynamic_image = rocker/r-parallel, wait = FALSE</code></pre>
-<pre><code>## 2020-05-26 15:16:08&gt; Operation running...</code></pre>
-<pre><code>## 2020-05-26 15:16:12&gt; Operation running...</code></pre>
-<pre><code>## 2020-05-26 15:16:18&gt; Operation complete in 6 secs</code></pre>
-<pre><code>## 2020-05-26 15:16:21&gt; Operation complete in 6 secs</code></pre>
-<pre><code>## 2020-05-26 15:16:23&gt; nested-cluster1 VM running</code></pre>
-<pre><code>## 2020-05-26 15:16:24&gt; nested-cluster2 VM running</code></pre>
-<pre><code>## 2020-05-26 15:16:32&gt; Public SSH key uploaded to instance</code></pre>
-<pre><code>## 2020-05-26 15:16:40&gt; Public SSH key uploaded to instance</code></pre>
-<pre><code>## 2020-05-26 15:16:40&gt; # Testing cluster:</code></pre>
+<pre><code>## 2020-05-27 12:00:01&gt; # Creating cluster with settings: predefined_type = n1-standard-4, scheduling = list(preemptible = TRUE), template = r-base, dynamic_image = rocker/r-parallel, wait = FALSE</code></pre>
+<pre><code>## 2020-05-27 12:00:05&gt; Operation running...</code></pre>
+<pre><code>## 2020-05-27 12:00:08&gt; Operation running...</code></pre>
+<pre><code>## 2020-05-27 12:00:14&gt; Operation complete in 6 secs</code></pre>
+<pre><code>## 2020-05-27 12:00:18&gt; Operation complete in 6 secs</code></pre>
+<pre><code>## 2020-05-27 12:00:19&gt; nested-cluster1 VM running</code></pre>
+<pre><code>## 2020-05-27 12:00:20&gt; nested-cluster2 VM running</code></pre>
+<pre><code>## 2020-05-27 12:00:28&gt; Public SSH key uploaded to instance</code></pre>
+<pre><code>## 2020-05-27 12:00:36&gt; Public SSH key uploaded to instance</code></pre>
+<pre><code>## 2020-05-27 12:00:36&gt; # Testing cluster:</code></pre>
 <p>Now comes part where we need to tweak our cluster setup. Nesting in the future framework is operationalised by defining a series of so-called <a href="https://cran.r-project.org/web/packages/future/vignettes/future-3-topologies.html">future “topologies”</a>. You can click on the previous link for more details, but the gist is that we define a nested plan of futures using the <code>plan(list(tweak(...), tweak(...)))</code> syntax. In this case, we are going to define two topology layers:</p>
 <ul>
-<li><strong>Topology 1.</strong> The “outer” plan, which tells <code>future</code> to use the cluster of three remote VMs.</li>
-<li><strong>Topology 2.</strong> The “inner” plan, which tells future to use all eight cores on each VM via the <code>multiprocess</code> option.</li>
+<li><strong>Topology 1.</strong> The “outer” plan, which tells <code>future</code> to use the cluster of two remote VMs.</li>
+<li><strong>Topology 2.</strong> The “inner” plan, which tells future to use all four cores on each VM via the <code>multiprocess</code> option.</li>
 </ul>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="kw">plan</span>(<span class="kw">list</span>( </span>
 <span id="cb52-2"><a href="#cb52-2"></a>  <span class="co">## Topology 1: Use the cluster of remote VMs </span></span>
@@ -1849,7 +1849,7 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb52-4"><a href="#cb52-4"></a>  <span class="co">## Topology 2: Use all CPUs on each VM</span></span>
 <span id="cb52-5"><a href="#cb52-5"></a>  <span class="kw">tweak</span>(multiprocess)  </span>
 <span id="cb52-6"><a href="#cb52-6"></a>  ))</span></code></pre></div>
-<p>That wasn’t too complicated, was it? We are now ready to use our cluster by feeding it a parallel function that can take advange of the nested structure. Here is one potential implementation that seems like it should work. I haven’t run it here, however, because there is something that we probably want to fix first. Can you guess what it is? (Try running the command yourself and then examining the output if you aren’t sure.) The answer is underneath.</p>
+<p>That wasn’t too complicated, was it? We are now ready to use our cluster by feeding it a parallel function that can take advantage of the nested structure. Here is one potential implementation that seems like it should work. I haven’t run it here, however, because there is something that we probably want to fix first. Can you guess what it is? (Try running the command yourself and then examining the output if you aren’t sure.) The answer is underneath.</p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="co">## NOT RUN (Run it yourself to see why it yields the wrong answer)</span></span>
 <span id="cb53-2"><a href="#cb53-2"></a></span>
 <span id="cb53-3"><a href="#cb53-3"></a><span class="co">## Outer future_lapply() loop over the two VMS</span></span>
@@ -1857,7 +1857,7 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb53-5"><a href="#cb53-5"></a>    <span class="co">## Inner future_lapply() loop: 16 asynchronous iterations of our slow function  </span></span>
 <span id="cb53-6"><a href="#cb53-6"></a>    <span class="kw">future_lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">16</span>, slow_func)</span>
 <span id="cb53-7"><a href="#cb53-7"></a>  })</span></code></pre></div>
-<p>The problem with the above code is that it will duplicate the exact same 16 iterations on <em>each</em> VM, instead of spliting up the job efficiently between them. What we want to do, then, is split the input data into distinct “chunks” for each VM to work on separately. There are various ways to do this chunking, but here’s an option that I’ve borrowed from <a href="https://stackoverflow.com/a/16275428">StackOverflow</a>. I like this function because it uses only base R functions and is robust to complications like unequal chunk lengths and different input types (e.g. factors vs numeric).</p>
+<p>The problem with the above code is that it will duplicate the exact same 16 iterations on <em>each</em> VM, instead of splitting up the job efficiently between them. What we want to do, then, is split the input data into distinct “chunks” for each VM to work on separately. There are various ways to do this chunking, but here’s an option that I’ve borrowed from <a href="https://stackoverflow.com/a/16275428">StackOverflow</a>. I like this function because it uses only base R functions and is robust to complications like unequal chunk lengths and different input types (e.g. factors vs numeric).</p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a>chunk_func &lt;-<span class="st"> </span><span class="cf">function</span>(x, n) <span class="kw">split</span>(x, <span class="kw">cut</span>(<span class="kw">seq_along</span>(x), n, <span class="dt">labels =</span> <span class="ot">FALSE</span>)) </span>
 <span id="cb54-2"><a href="#cb54-2"></a><span class="co">## Examples (try them yourself)</span></span>
 <span id="cb54-3"><a href="#cb54-3"></a><span class="co"># chunk_func(1:8, 2)</span></span>
@@ -1878,7 +1878,7 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb55-12"><a href="#cb55-12"></a>    <span class="kw">future_lapply</span>(input_chunk, slow_func)</span>
 <span id="cb55-13"><a href="#cb55-13"></a>    })</span>
 <span id="cb55-14"><a href="#cb55-14"></a><span class="kw">toc</span>()</span></code></pre></div>
-<pre><code>## 26.19 sec elapsed</code></pre>
+<pre><code>## 26.733 sec elapsed</code></pre>
 <p>And it worked! There’s a little bit of overhead, but we are very close to the maximum theoretical speedup. Note that this overhead time would increase if we were transferring large amounts of data around the cluster — which, again future will take care of automatically for us — but the same basic principles would apply.</p>
 <p><strong>Bottom line:</strong> You can create can create a mini supercomputer up in the cloud using only a few lines of code, and then interact with it directly from your local R environment. Honestly, what’s not to like?</p>
 <p>Normally, I would remind you to shut down your VM instances now. But first, let’s quickly using them again for one last example.</p>
@@ -1971,17 +1971,17 @@ University of Oregon | <a href="https://github.com/uo-ec510-2020-spring/lectures
 <span id="cb60-2"><a href="#cb60-2"></a><span class="kw">gce_vm_stop</span>(vms_nested)</span></code></pre></div>
 <pre><code>## [[1]]
 ## ==Zone Operation stop :  RUNNING
-## Started:  2020-05-26 15:19:08
+## Started:  2020-05-27 12:03:03
 ## [[2]]
 ## ==Zone Operation stop :  RUNNING
-## Started:  2020-05-26 15:19:09</code></pre>
+## Started:  2020-05-27 12:03:04</code></pre>
 <div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a><span class="kw">gce_vm_delete</span>(vms_nested)</span></code></pre></div>
 <pre><code>## [[1]]
 ## ==Zone Operation delete :  PENDING
-## Started:  2020-05-26 15:19:09
+## Started:  2020-05-27 12:03:05
 ## [[2]]
 ## ==Zone Operation delete :  PENDING
-## Started:  2020-05-26 15:19:10</code></pre>
+## Started:  2020-05-27 12:03:05</code></pre>
 </div>
 <div id="other-topics" class="section level3">
 <h3>Other topics</h3>
