@@ -184,8 +184,8 @@ You should check what the latest available version of Rstudio Server is [here](h
 
 ```{bash, eval=F}
 grant@my-vm:~$ sudo apt install gdebi-core
-grant@my-vm:~$ wget https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.2.5042-amd64.deb
-grant@my-vm:~$ sudo gdebi rstudio-server-1.2.5042-amd64.deb ## Hit "y" when prompted
+grant@my-vm:~$ wget https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.3.959-amd64.deb
+grant@my-vm:~$ sudo gdebi rstudio-server-1.3.959-amd64.deb ## Hit "y" when prompted
 ```
 
 #### Add a user
