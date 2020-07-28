@@ -88,6 +88,7 @@ The following code chunk will install (if necessary) and load everything for you
 ```{r libs, cache=FALSE, message=FALSE}
 if (!require(pacman)) install.packages('pacman', repos = 'https://cran.rstudio.com')
 pacman::p_load(dplyr, data.table, dtplyr, tidyfast, microbenchmark, ggplot2, nycflights13)
+options(dplyr.summarise.inform = FALSE) ## Turn off annoying dplyr group_by messages
 ```
 
 ---
@@ -580,6 +581,45 @@ DT[, x_sq := x^2][] ## Adding [] prints the result.
 
 # Modifying columns := (cont.)
 
+
+As I keep saying, *modifying by reference* has important implications for data manipulation. Consider what happens if we copy our data.table and then remove a column.
+
+```{r mod_copy1}
+DT_copy = DT
+DT_copy[, x_sq := NULL]
+```
+
+--
+
+Clearly, "x_sq" has been removed from `DT_copy`. But what of the original `DT` table?
+
+--
+
+```{r mod_copy2}
+DT
+```
+
+--
+
+Uh-oh! It too has been removed... exactly as modifying by reference demands. To avoid this behaviour, use the explicit [`data.table::copy()`](https://rdatatable.gitlab.io/data.table/reference/copy.html) function. Run this next chunk yourself:
+
+```{r, highlightSpans = TRUE, eval = FALSE}
+DT[, x_sq := x^2]     
+DT_copy = copy(DT)  
+DT_copy[, x_sq := NULL]
+DT ## x_sq is still there (run and confirm for yourself)
+```
+```{r mod_copy3, include=FALSE}
+DT[, x_sq := x^2]     
+DT_copy = copy(DT)  
+DT_copy[, x_sq := NULL]
+DT ## x_sq is still there (run and confirm for yourself)
+```
+
+---
+
+# Modifying columns := (cont.)
+
 ### Sub-assign by reference
 
 One really cool implication of `:=` is data.table's [sub-assign by reference](https://rdatatable.gitlab.io/data.table/articles/datatable-reference-semantics.html#ref-i-j) functionality. As a simple example, consider another fake dataset.
@@ -769,7 +809,7 @@ starwars_dt[, mean_height := mean(height, na.rm=T)] %>% ## Add mean height as a 
 ---
 # Aggregating (cont.)
 
-data.table also provides specialised convenience [symbols](https://rdatatable.gitlab.io/data.table/reference/special-symbols.html) for common aggregation tasks in `j`.
+data.table also provides [special convenience symbols](https://rdatatable.gitlab.io/data.table/reference/special-symbols.html) for common aggregation tasks in `j`.
 
 For example, we can quickly count the number of observations using `.N`.
 
@@ -1037,7 +1077,7 @@ microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
 
 # Example (cont.)
 
-```{r collapse_comp_key, dependson=collapse_dt, dependson=collapse_dplyr, echo=FALSE}
+```{r collapse_comp_key, dependson=collapse_dt, dependson=collapse_dplyr, echo=FALSE, message=FALSE}
 storms_dt_key = as.data.table(storms, key = c("name", "year", "month", "day"))
 collapse_dt_key = function() {
   storms_dt_key[, .(wind = mean(wind), pressure = mean(pressure), category = first(category)),
