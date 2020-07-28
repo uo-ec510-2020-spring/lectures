@@ -257,13 +257,14 @@ The same is true for data.table. In fact, data.table functions only work on obje
 
 --
 
-To create a data.table, we have a couple of options&lt;sup&gt;1&lt;/sup&gt;:
+To create a data.table, we have a couple of options:
+- `fread('mydata.csv')` reads a CSV into R as a data.table (and is very fast).&lt;sup&gt;1&lt;/sup&gt;
 - `data.table(x = 1:10)` creates a new data.table from scratch
 - `as.data.table(df)` coerces an existing data frame (here: `df`) to a data.table.
 - `setDT(df)` coerces an existing data frame to a data.table *by reference*; i.e. we don't have to (re)assign it.
 
 
-.footnote[&lt;sup&gt;1&lt;/sup&gt; CSV files imported into R via the amazingly fast `fread()` function are automatically converted to data.table class too. We'll cover `fread()` in the next lecture in data I/O, though.]
+.footnote[&lt;sup&gt;1&lt;/sup&gt; We'll cover `fread()` in more depth in the next lecture on data I/O.]
 
 ---
 
@@ -1224,15 +1225,28 @@ microbenchmark(collapse_dplyr(), collapse_dt(), collapse_dt_key(), times = 10)
 
 
 ```
-## Unit: milliseconds
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+## `summarise()` regrouping output by 'name', 'year', 'month' (override with `.groups` argument)
+```
+
+```
+## Unit: microseconds
 ##               expr        min         lq       mean     median         uq
-##   collapse_dplyr() 119.758747 120.867348 125.285551 123.357620 124.851012
-##      collapse_dt()   1.755909   1.797375   2.243366   1.900814   1.953445
-##  collapse_dt_key()   1.056198   1.119743   1.471999   1.202432   1.313009
+##   collapse_dplyr() 129210.883 139302.780 148012.473 144246.573 149466.618
+##      collapse_dt()   1671.859   1756.387   2154.350   1824.409   1893.437
+##  collapse_dt_key()    936.329   1004.364   1566.687   1043.501   1135.937
 ##         max neval cld
-##  146.981494    10   b
-##    5.402327    10  a 
-##    3.943881    10  a
+##  188880.169    10   b
+##    5172.168    10  a 
+##    4230.053    10  a
 ```
 
 --

@@ -246,13 +246,14 @@ The same is true for data.table. In fact, data.table functions only work on obje
 
 --
 
-To create a data.table, we have a couple of options<sup>1</sup>:
+To create a data.table, we have a couple of options:
+- `fread('mydata.csv')` reads a CSV into R as a data.table (and is very fast).<sup>1</sup>
 - `data.table(x = 1:10)` creates a new data.table from scratch
 - `as.data.table(df)` coerces an existing data frame (here: `df`) to a data.table.
 - `setDT(df)` coerces an existing data frame to a data.table *by reference*; i.e. we don't have to (re)assign it.
 
 
-.footnote[<sup>1</sup> CSV files imported into R via the amazingly fast `fread()` function are automatically converted to data.table class too. We'll cover `fread()` in the next lecture in data I/O, though.]
+.footnote[<sup>1</sup> We'll cover `fread()` in more depth in the next lecture on data I/O.]
 
 ---
 
