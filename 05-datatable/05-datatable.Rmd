@@ -500,6 +500,16 @@ Note that we don't actually need commas when we're only subsetting on `i` (i.e. 
 
 ---
 
+# Subset by rows (filter) cont.
+
+Just to emphasise the point, here's an example of subsetting by rows using our starwars data.table from earlier.
+
+```{r sub_rows1}
+starwars_dt[height>190 & species=='Human']
+```
+
+---
+
 # Order by rows (arrange)
 
 ```r
@@ -753,7 +763,6 @@ I like the `.()` syntax best &mdash; less typing! &mdash; but each to their own.
 
 Okay, back to subsetting on columns...
 
-
 ---
 
 # Subsetting on columns (cont.)
@@ -764,23 +773,37 @@ You can also exclude columns through negation. Try this next code chunk yourself
 starwars_dt[, !c("name", "height")]
 ```
 
+--
 
-And, you can rename a column as follows (again, run this yourself):
+### Renaming columns
+
+You can rename (set) a column by reference. Again, run this yourself:
 
 ```{r, eval=FALSE}
-setnames(starwars_dt, old = "name", new = "alias")[]
-## Safer to change it back, just in case we use "name" on a later slide again
-setnames(starwars_dt, old = "alias", new = "name")
+setnames(starwars_dt, old = c("name", "homeworld"), new = c"(alias", "crib"))[]
+## Better change it back, in case we use "name" or "homeworld" on a later slide
+setnames(starwars_dt, old = c("alias", "crib"), new = c("name", "homeworld"))
 ```
 
 --
 
-### General comment
+While the `setnames()` approach offers performance benefits, I often find it convenient to dynamically (and/or temporarily) rename columns when subsetting them. For example:
 
-While it offers some important performance gains, I have to admit that I find data.table's column subsetting approach less user-friendly than dplyr's `select()` and `rename()`... On the plus, side, you can still use dplyr verbs on data.tables.
+```{r rename1}
+starwars_dt[1:2, .(alias = name, crib = homeworld)]
+```
 
-```{r, eval=FALSE}
-starwars_dt %>% select(homeworld, everything()) ## Try this yourself
+---
+
+# Subsetting on columns (cont.)
+
+One last thing I'll mention w.r.t. to subsetting columns is that you can also use dplyr verbs on data.tables if you prefer. 
+
+For example run the following code chunk for yourself. (You'll get a warning about efficiency loss, but this will be very minor for a case like this.)
+
+```{r rename2, eval=FALSE}
+starwars_dt[1:5, ] %>% 
+  select(crib = homeworld, everything())
 ```
 
 --
@@ -788,6 +811,7 @@ starwars_dt %>% select(homeworld, everything()) ## Try this yourself
 I don't want to preempt myself, though. I'll get back to dplyr+data.table functionality at the end of the lecture....
 
 ---
+
 # Aggregating
 
 Finally, we can do aggregating manipulations in `j`.
@@ -845,7 +869,7 @@ To perform aggregations by multiple variables, we'll use the `.()` syntax again.
 
 ```{r by1, cache=FALSE}
 starwars_dt[, .(mean_height = mean(height, na.rm=T)), by = .(species, homeworld)] %>%
-  head(4) ## Just keep everything on the slide
+  head(4) ## Just to keep everything on the slide
 ```
 
 ---
@@ -978,13 +1002,11 @@ DT[, lapply(.SD, mean)]
 The last thing I want to mention w.r.t. `by` is its close relative: `keyby`.
 
 The `keyby` argument works exactly like `by` &mdash; you can use it as a drop-in replacement &mdash; except that it orders the results and creates a **key**.
-- Setting a key for a data.table will allow for various (and often astonishing) performance gains<sup>1</sup>
+- Setting a key for a data.table will allow for various (and often astonishing) performance gains.<sup>1</sup>
+- Keys are important enough that I want to save them for their own section, though...
 
 .footnote[<sup>1</sup> Note that you won't see an immediate performance gain with `keyby`, but subsequent operations will certainly benefit. (Of course, you can get an immediate boost by setting the key ahead of time, but I'll explain all that on the next slide...)]
 
---
-
-Keys are important enough that I want to save them for their own section, though...
 
 ---
 name: keys
@@ -1193,7 +1215,7 @@ microbenchmark(merge_dt(), merge_dt_key(), times = 10)
 
 --
 
-Okay, not *such* a dramatic speed-up in this simple case, but trust me: For really big datasets with complicated joins (e.g. multiple columns), setting keys will make a huge difference. (FWIW, the same is true for dplyr. See [here](https://tysonbarrett.com//jekyll/update/2019/10/11/speed_of_joins/).) 
+So, we get about a 2x speed-up for this simple case. Trust me, though: For really big datasets with complicated joins, ordering your data by setting keys will make a huge difference. (FWIW, the same is true for dplyr. See [here](https://tysonbarrett.com//jekyll/update/2019/10/11/speed_of_joins/).) 
 
 ---
 name: reshape
@@ -1353,7 +1375,6 @@ Closely related to the second first point: Don't try to shoehorn every problem i
 
 Having worked extensively with both packages, I think it's fair to say that there are things the tidyverse (dplyr+tidyr) does better, and there are things that data.table does better.
 - If you find a great solution on StackOverflow that uses the "other" package... use it.
-- Don't be a fanatic. Insisting on ecosystem purity is rarely worth it. 
 
 --
 
@@ -1363,9 +1384,11 @@ Plus, as I hinted earlier, you *can* use tidyverse verbs on data.tables. Try you
 starwars_dt %>% group_by(homeworld) %>% summarise(height = mean(height, na.rm=T))
 ```
 
+.footnote[<sup>1</sup> This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. Luckily there's a better solution coming on the next slide...]
+
 --
 
-(This does [incur](https://stackoverflow.com/a/27513921) a performance penalty. Luckily there's an ever better solution on the next slide...)
+**Bottom line:** Don't be a fanatic. Insisting on ecosystem purity is rarely worth it. 
 
 ---
 
@@ -1465,14 +1488,19 @@ Here are some recommended further resources:
 - http://r-datatable.com (Official website. See the vignettes, especially.)
 - https://github.com/Rdatatable/data.table#cheatsheets (Cheatsheet.)
 - https://atrebas.github.io/post/2019-03-03-datatable-dplyr (Really nice, side-by-side comparisons of common data.table and dplyr operations.)
+- https://brooksandrew.github.io/simpleblog/articles/advanced-data-table/ (Some cool advanced data.table tricks.)
 
 And related packages:
 - https://tysonbarrett.com/tidyfast
 - https://dtplyr.tidyverse.org
 
---
+---
 
-P.S. Your next assignment is up: Impress me with your data wrangling skills using either the tidyverse or data.table (or both!)
+# PS &mdash; Assignment
+
+Your next assignment is up.
+
+Impress me with your data wrangling skills using either the tidyverse or data.table (or both!)
 
 ---
 class: inverse, center, middle
