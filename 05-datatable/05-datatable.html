@@ -544,14 +544,14 @@ starwars_dt[order(-birth_year)] ## (temporarily) sort by oldest to youngest
 
 --
 
-While ordering as per the above is very straightfoward, data.table also provides an optimised `setorder()` function for reordering *by reference*.
+While ordering as per the above is very straightforward, data.table also provides an optimised `setorder()` function for reordering *by reference*.
 
 --
 
 
 ```r
 setorder(starwars_dt, birth_year, na.last = TRUE)
-head(starwars_dt[, name:birth_year]) ## Only print subset to stay on the slide
+starwars_dt[1:5, name:birth_year] ## Only print subset to stay on the slide
 ```
 
 ```
@@ -561,7 +561,6 @@ head(starwars_dt[, name:birth_year]) ## Only print subset to stay on the slide
 ## 3:        Luke Skywalker    172   77      blond       fair      blue         19
 ## 4:           Leia Organa    150   49      brown      light     brown         19
 ## 5:        Wedge Antilles    170   77      brown       fair     hazel         21
-## 6:              Plo Koon    188   80       none     orange     black         22
 ```
 
 ---
@@ -821,13 +820,13 @@ We can also use the `j` slot to subset our data on columns. I'll return to the s
 Subset by column position:
 
 ```r
-starwars_dt[, c(1:3, 10)] %&gt;% head(2)
+starwars_dt[1:2, c(1:3, 10)]
 ```
 
 ```
-##              name height mass homeworld
-## 1: Luke Skywalker    172   77  Tatooine
-## 2:          C-3PO    167   75  Tatooine
+##                     name height mass homeworld
+## 1: Wicket Systri Warrick     88   20     Endor
+## 2:                 IG-88    200  140      &lt;NA&gt;
 ```
 
 --
@@ -837,13 +836,13 @@ Or by name:
 ```r
 # starwars_dt[, c("name", "height", "mass", "homeworld")] ## Also works
 # starwars_dt[, list(name, height, mass, homeworld)] ## So does this
-starwars_dt[, .(name, height, mass, homeworld)] %&gt;% head(2)
+starwars_dt[1:2, .(name, height, mass, homeworld)]
 ```
 
 ```
-##              name height mass homeworld
-## 1: Luke Skywalker    172   77  Tatooine
-## 2:          C-3PO    167   75  Tatooine
+##                     name height mass homeworld
+## 1: Wicket Systri Warrick     88   20     Endor
+## 2:                 IG-88    200  140      &lt;NA&gt;
 ```
 
 ---
@@ -925,9 +924,8 @@ Note that we don't keep anything unless we assign the result to a new object. If
 
 
 ```r
-starwars_dt[, mean_height := mean(height, na.rm=T)] %&gt;% ## Add mean height as a column
-  .[, .(name, height, mean_height)] %&gt;% ## Just display a few columns on the slide
-  head(5)
+starwars_dt[, mean_height := mean(height, na.rm=T)] %&gt;% ## Add mean height as column
+  .[1:5, .(name, height, mean_height)] ## Just to keep everything on the slide
 ```
 
 ```
@@ -985,7 +983,7 @@ To perform aggregations by multiple variables, we'll use the `.()` syntax again.
 
 ```r
 starwars_dt[, .(mean_height = mean(height, na.rm=T)), by = .(species, homeworld)] %&gt;%
-  head(4)
+  head(4) ## Just keep everything on the slide
 ```
 
 ```
@@ -1606,7 +1604,7 @@ storms_dt[, .(wind = mean(wind),
 # Don't be a fanatic
 
 Closely related to the second first point: Don't try to shoehorn every problem into a tidyverse or data.table framework.
-- Recall my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem. (You can add data.table to that list.)
+- Recall my [admonition](https://raw.githack.com/uo-ec510-2020-spring/lectures/master/04-tidyverse/04-tidyverse.html#11) from last time: "A combination of tidyverse and base R is often the best solution to a problem. You can add data.table to that list.
 
 --
 
